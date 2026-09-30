@@ -390,13 +390,7 @@ button,#clickZone,#threeCanvas{touch-action:manipulation}
         <span style="font-weight:700;color:var(--muted)">₽</span>
       </div>
       <div class="bet-row" id="minesBets">
-        <button data-bet="50">50</button>
-        <button data-bet="100">100</button>
-        <button data-bet="500">500</button>
-        <button data-bet="1000">1K</button>
-        <button data-bet="10000">10K</button>
-        <button data-bet="100000">100K</button>
-        <button id="minesAllBtn">ВСЕ</button>
+        <button id="minesAllBtn">ВСЕ</button><button id="minesHalfBtn">1/2</button><button id="minesDblBtn">2×</button>
       </div>
       <div style="font-weight:700;margin:14px 0 6px;font-size:.8rem;color:var(--muted)">МИНЫ (1–24)</div>
       <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:8px">
@@ -1118,30 +1112,28 @@ function showToast(text,isAch=true){
 // ==================== UI ====================
 
 const CONSUMABLES = [
-  // Шприцы
-  {id:'syr_luck',name:'Шприц удачи',desc:'+20% к шансу редких в кейсах · 5 мин',short:'+20% шанс',kind:'luck',val:20,dur:300,icon:'💉',color:'#30d158',cost:1500000},
-  {id:'syr_mega',name:'Мега-шприц',desc:'+50% к шансу редких в кейсах · 3 мин',short:'+50% шанс',kind:'luck',val:50,dur:180,icon:'🧪',color:'#bf5af2',cost:15000000},
-  {id:'syr_gold',name:'Золотой шприц',desc:'×5 ко всему доходу · 2 мин',short:'×5 всё',kind:'all',val:5,dur:120,icon:'✨',color:'#ffd700',cost:50000000},
-  {id:'syr_rage',name:'Шприц ярости',desc:'×10 к клику · 1 мин',short:'×10 клик',kind:'click',val:10,dur:60,icon:'😡',color:'#ff2d55',cost:30000000},
   // Зелья шанса кейсов
-  {id:'zl_luck15',name:'Зелье удачи I',desc:'Шанс редких в кейсах +15% · 5 мин',short:'+15% шанс',kind:'luck',val:15,dur:300,icon:'🍀',color:'#30d158',cost:2500000},
-  {id:'zl_luck35',name:'Зелье удачи II',desc:'Шанс редких в кейсах +35% · 5 мин',short:'+35% шанс',kind:'luck',val:35,dur:300,icon:'🍀',color:'#64d2ff',cost:25000000},
-  {id:'zl_luck50',name:'Зелье удачи III',desc:'Шанс редких в кейсах +50% · 5 мин',short:'+50% шанс',kind:'luck',val:50,dur:300,icon:'🍀',color:'#bf5af2',cost:250000000},
+  {id:'zl_luck15',name:'Зелье удачи I',desc:'Шанс редких в кейсах +15% · 5 мин',short:'+15% шанс',kind:'luck',val:15,dur:300,icon:'🍀',color:'#30d158',cost:10000000},
+  {id:'zl_luck35',name:'Зелье удачи II',desc:'Шанс редких в кейсах +35% · 5 мин',short:'+35% шанс',kind:'luck',val:35,dur:300,icon:'🍀',color:'#64d2ff',cost:100000000},
+  {id:'zl_luck50',name:'Зелье удачи III',desc:'Шанс редких в кейсах +50% · 5 мин',short:'+50% шанс',kind:'luck',val:50,dur:300,icon:'🍀',color:'#bf5af2',cost:1000000000},
   // Зелья кликов
-  {id:'zl_click2',name:'Зелье клика ×2',desc:'Доход с клика ×2 · 3 мин',short:'×2 клик',kind:'click',val:2,dur:180,icon:'🧃',color:'#ff9f0a',cost:3000000},
-  {id:'zl_click4',name:'Зелье клика ×4',desc:'Доход с клика ×4 · 3 мин',short:'×4 клик',kind:'click',val:4,dur:180,icon:'🧃',color:'#ff6b00',cost:30000000},
-  {id:'zl_click6',name:'Зелье клика ×6',desc:'Доход с клика ×6 · 2 мин',short:'×6 клик',kind:'click',val:6,dur:120,icon:'🧃',color:'#ff453a',cost:300000000},
-  {id:'zl_click10',name:'Зелье клика ×10',desc:'Доход с клика ×10 · 2 мин',short:'×10 клик',kind:'click',val:10,dur:120,icon:'🧃',color:'#ff2d55',cost:3000000000},
+  {id:'zl_click2',name:'Зелье клика ×2',desc:'Доход с клика ×2 · 3 мин',short:'×2 клик',kind:'click',val:2,dur:180,icon:'🧃',color:'#ff9f0a',cost:15000000},
+  {id:'zl_click4',name:'Зелье клика ×4',desc:'Доход с клика ×4 · 3 мин',short:'×4 клик',kind:'click',val:4,dur:180,icon:'🧃',color:'#ff6b00',cost:150000000},
+  {id:'zl_click6',name:'Зелье клика ×6',desc:'Доход с клика ×6 · 2 мин',short:'×6 клик',kind:'click',val:6,dur:120,icon:'🧃',color:'#ff453a',cost:1500000000},
+  {id:'zl_click10',name:'Зелье клика ×10',desc:'Доход с клика ×10 · 2 мин',short:'×10 клик',kind:'click',val:10,dur:120,icon:'🧃',color:'#ff2d55',cost:15000000000},
   // Свои зелья
-  {id:'zl_pass',name:'Зелье дохода',desc:'Пассивный доход ×3 · 5 мин',short:'×3 пассив',kind:'pass',val:3,dur:300,icon:'💰',color:'#30d158',cost:20000000},
-  {id:'zl_crit',name:'Зелье крита',desc:'+30% к шансу крита · 3 мин',short:'+30% крит',kind:'crit',val:30,dur:180,icon:'⚡',color:'#ffd60a',cost:10000000},
-  {id:'zl_disc',name:'Зелье скидки',desc:'Кейсы дешевле на 25% · 5 мин',short:'−25% цена',kind:'disc',val:0.75,dur:300,icon:'🏷️',color:'#0a84ff',cost:60000000},
+  {id:'zl_pass',name:'Зелье дохода',desc:'Пассивный доход ×3 · 5 мин',short:'×3 пассив',kind:'pass',val:3,dur:300,icon:'💰',color:'#30d158',cost:100000000},
+  {id:'zl_crit',name:'Зелье крита',desc:'+30% к шансу крита · 3 мин',short:'+30% крит',kind:'crit',val:30,dur:180,icon:'⚡',color:'#ffd60a',cost:50000000},
+  {id:'zl_disc',name:'Зелье скидки',desc:'Кейсы дешевле на 25% · 5 мин',short:'−25% цена',kind:'disc',val:0.75,dur:300,icon:'🏷️',color:'#0a84ff',cost:300000000},
+  {id:'el_luck',name:'Элитное зелье удачи',desc:'Шанс редких в кейсах +75% · 5 мин',short:'+75% шанс',kind:'luck',val:75,dur:300,icon:'🔮',color:'#ffd700',cost:1e20,unlock:2.5e17},
+  {id:'el_click',name:'Элитное зелье клика',desc:'Доход с клика ×25 · 2 мин',short:'×25 клик',kind:'click',val:25,dur:120,icon:'🔥',color:'#ff2d55',cost:1e20,unlock:2.5e17},
+  {id:'el_combo',name:'Совместное зелье',desc:'Удача кейсов +100% и клик ×35 · 3 мин',short:'+100% шанс',kind:'luck',val:100,dur:180,icon:'🌌',color:'#bf5af2',cost:1e21,unlock:5e17,also:{kind:'click',val:35,short:'×35 клик'}},
 ];
 
 const CONS_CATS=[
-  {key:'syr',title:'💉 Шприцы',ids:['syr_luck','syr_mega','syr_gold','syr_rage']},
   {key:'luck',title:'🍀 Зелья удачи кейсов',ids:['zl_luck15','zl_luck35','zl_luck50']},
   {key:'click',title:'🧃 Зелья клика',ids:['zl_click2','zl_click4','zl_click6','zl_click10']},
+  {key:'elite',title:'👑 Элитные зелья',ids:['el_luck','el_click','el_combo']},
   {key:'other',title:'⚗️ Другие зелья',ids:['zl_pass','zl_crit','zl_disc']},
 ];
 function consHead(cat,count,invMode){
@@ -1201,7 +1193,7 @@ function renderItems(){
         <div style="font-weight:800;font-size:0.9rem">${c.name}</div>
         <div style="color:var(--muted);font-size:0.72rem">${c.desc}</div>
       </div>
-      <button class="buy-btn" style="min-width:70px" data-cons-buy="${c.id}">${formatNum(c.cost)} ₽</button>
+      ${c.unlock&&!(game.potUnl&&game.potUnl[c.id])?`<button class="buy-btn" style="min-width:70px" data-cons-unl="${c.id}">🔒 ${formatNum(c.unlock)} ₽</button>`:`<button class="buy-btn" style="min-width:70px" data-cons-buy="${c.id}">${formatNum(c.cost)} ₽</button>`}
     </div>`;
     });
   });
@@ -1241,6 +1233,9 @@ function renderItems(){
   box.querySelectorAll('[data-cons-buy]').forEach(btn=>{
     btn.onclick=(e)=>{e.stopPropagation();buyConsumable(btn.dataset.consBuy)};
   });
+  box.querySelectorAll('[data-cons-unl]').forEach(btn=>{btn.onclick=(e)=>{e.stopPropagation();const c=CONSUMABLES.find(x=>x.id===btn.dataset.consUnl);if(!c)return;
+    if(game.balance<c.unlock){showToast('Нужно '+formatNum(c.unlock)+' ₽',false);return}
+    game.balance-=c.unlock;game.potUnl=game.potUnl||{};game.potUnl[c.id]=true;showToast('🔓 '+c.name+' открыто',false);updateUI();save();renderItems()}});
 }
 
 function renderAutoUpgradesInline(){
@@ -1268,6 +1263,7 @@ function renderAutoUpgradesInline(){
 
 function buyConsumable(id){
   const c=CONSUMABLES.find(x=>x.id===id);if(!c)return;
+  if(c.unlock&&!(game.potUnl&&game.potUnl[id])){showToast('Сначала разблокируй',false);return}
   if(game.balance<c.cost){showToast('Недостаточно средств',false);return}
   game.balance-=c.cost;
   if(!game.inventory)game.inventory={};
@@ -1281,7 +1277,7 @@ function renderBuffs(){
   const inv=game.inventory||{};
   const keys=Object.keys(inv).filter(k=>inv[k]>0);
   if(!keys.length){
-    box.innerHTML='<div style="text-align:center;color:var(--muted);padding:24px 12px;font-size:0.85rem">Пусто. Купи шприцы и зелья во вкладке «Предметы»</div>';
+    box.innerHTML='<div style="text-align:center;color:var(--muted);padding:24px 12px;font-size:0.85rem">Пусто. Купи зелья во вкладке «Предметы»</div>';
     return;
   }
   let html='';
@@ -1662,17 +1658,39 @@ const Mines = {
 
 
 function drawMiniCoin(skin, size){
-  const c=document.createElement('canvas');c.width=size;c.height=size;
-  const ctx=c.getContext('2d');
-  const col1='#'+(skin.color||0xffd700).toString(16).padStart(6,'0');
-  const col2='#'+(skin.color2||skin.color||0xaa6600).toString(16).padStart(6,'0');
-  const cx=size/2,cy=size/2,r=size/2-2;
-  const g=ctx.createRadialGradient(cx-r*0.3,cy-r*0.3,2,cx,cy,r);
-  g.addColorStop(0,col1);g.addColorStop(1,col2);
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='bold '+(size*0.4)+'px Arial';
-  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('₽',cx,cy+1);
+  const c=document.createElement('canvas');c.width=size;c.height=size;const x=c.getContext('2d');
+  const hex=v=>'#'+(v==null?0xffd700:v).toString(16).padStart(6,'0');
+  const c1=hex(skin.color),c2=hex(skin.color2!=null?skin.color2:(skin.color!=null?skin.color:0xaa6600));
+  const cx=size/2,cy=cx,r=cx-2;
+  let seed=0;for(const ch of String(skin.id))seed=(seed*31+ch.charCodeAt(0))>>>0;
+  const rn=()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296;
+  const m=skin.mult||0,t=m<5?0:m<50?1:m<500?2:m<2000?3:4,p=skin.pattern||'solid';
+  const EM={fire:'🔥',ice:'❄️',space:'✨',gem:'💎',gold:'👑',neon:'⚡',wave:'🌊',stone:'🪨',metal:'⚙️',wood:'🍃',secret:'🌌'};
+  const em=EM[p]||(t>=2?'⭐':'');
+  if(t>=3){x.save();x.shadowColor=c1;x.shadowBlur=size*0.09;x.fillStyle=c2;x.beginPath();x.arc(cx,cy,r-1,0,7);x.fill();x.restore()}
+  x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.clip();
+  const g=x.createRadialGradient(cx-r*.35,cy-r*.35,2,cx,cy,r*1.05);g.addColorStop(0,c1);g.addColorStop(1,c2);x.fillStyle=g;x.fillRect(0,0,size,size);
+  x.lineWidth=Math.max(1,size/60);
+  if(p==='metal'){x.strokeStyle='rgba(255,255,255,.16)';for(let i=-size;i<size*2;i+=size/14){x.beginPath();x.moveTo(i,0);x.lineTo(i-size*.5,size);x.stroke()}}
+  else if(p==='wave'){for(let k=0;k<5;k++){x.strokeStyle='rgba(255,255,255,'+(.10+k*.03)+')';x.beginPath();for(let i=0;i<=size;i+=3){const y=size*(.2+k*.16)+Math.sin(i/size*9+k)*size*.04;i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke()}}
+  else if(p==='fire'){const f=x.createLinearGradient(0,size,0,size*.2);f.addColorStop(0,'rgba(255,60,0,.65)');f.addColorStop(1,'rgba(255,220,0,0)');x.fillStyle=f;for(let i=0;i<7;i++){const bx=i*size/6,h=size*(.35+rn()*.35);x.beginPath();x.moveTo(bx-size*.09,size);x.quadraticCurveTo(bx,size-h,bx+size*.09,size);x.fill()}}
+  else if(p==='ice'){x.strokeStyle='rgba(255,255,255,.35)';for(let i=0;i<9;i++){const a=rn()*6.28,l=size*(.2+rn()*.4),px=rn()*size,py=rn()*size;x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.cos(a)*l,py+Math.sin(a)*l);x.stroke()}}
+  else if(p==='space'||p==='secret'){x.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<26;i++){x.globalAlpha=.3+rn()*.7;x.beginPath();x.arc(rn()*size,rn()*size,rn()*size*.02+.5,0,7);x.fill()}x.globalAlpha=1;const n=x.createRadialGradient(cx*1.3,cy*.7,0,cx*1.3,cy*.7,r);n.addColorStop(0,'rgba(190,90,255,.45)');n.addColorStop(1,'rgba(190,90,255,0)');x.fillStyle=n;x.fillRect(0,0,size,size)}
+  else if(p==='gem'){x.strokeStyle='rgba(255,255,255,.3)';for(let i=0;i<8;i++){const a=i*Math.PI/4;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);x.stroke();x.beginPath();x.arc(cx,cy,r*(.35+i*.08),a,a+Math.PI/4);x.stroke()}}
+  else if(p==='neon'){for(let k=1;k<4;k++){x.strokeStyle='rgba(255,255,255,'+(.5-k*.1)+')';x.beginPath();x.arc(cx,cy,r*k*.27,0,7);x.stroke()}}
+  else if(p==='stone'){for(let i=0;i<40;i++){x.fillStyle=rn()>.5?'rgba(0,0,0,.18)':'rgba(255,255,255,.14)';x.beginPath();x.arc(rn()*size,rn()*size,rn()*size*.03+.6,0,7);x.fill()}}
+  else if(p==='wood'){x.strokeStyle='rgba(0,0,0,.18)';for(let k=1;k<6;k++){x.beginPath();x.arc(cx,cy,r*k*.17,0,7);x.stroke()}}
+  else if(p==='gold'){x.fillStyle='rgba(255,255,255,.14)';for(let i=0;i<12;i+=2){const a=i*Math.PI/6;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,r,a,a+Math.PI/6);x.fill()}}
+  else{x.fillStyle='rgba(255,255,255,.07)';for(let i=0;i<14;i++){x.beginPath();x.arc(rn()*size,rn()*size,rn()*size*.05+1,0,7);x.fill()}}
+  if(t>=3){x.strokeStyle='rgba(255,255,255,.18)';for(let i=0;i<16;i++){const a=i*Math.PI/8;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);x.stroke()}}
+  if(em&&t>=1){x.globalAlpha=.22;x.textAlign='center';x.textBaseline='middle';x.font=(size*.24)+'px Arial';[[.28,.3],[.74,.34],[.3,.76],[.72,.74]].forEach(q=>x.fillText(em,size*q[0],size*q[1]));x.globalAlpha=1}
+  const gl=x.createLinearGradient(0,0,0,size*.55);gl.addColorStop(0,'rgba(255,255,255,.35)');gl.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gl;x.beginPath();x.ellipse(cx,cy*.55,r*.72,r*.45,0,0,7);x.fill();
+  x.restore();
+  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=Math.max(2,size/28);x.beginPath();x.arc(cx,cy,r-1,0,7);x.stroke();
+  x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=Math.max(1,size/60);x.beginPath();x.arc(cx,cy,r*.82,0,7);x.stroke();
+  if(t>=2){x.setLineDash([size/30,size/30]);x.strokeStyle='rgba(255,255,255,.4)';x.beginPath();x.arc(cx,cy,r*.9,0,7);x.stroke();x.setLineDash([])}
+  x.textAlign='center';x.textBaseline='middle';x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=size*.03;x.fillStyle='rgba(255,255,255,.92)';
+  x.font='bold '+(size*(t>=2?.34:.4))+'px Arial';x.fillText('₽',cx,cy+1);
   return c;
 }
 
@@ -2068,6 +2086,7 @@ function activateBuff(id){
   const now=Date.now();game.fx=game.fx||{};const key=c.kind+'_'+id,cur=game.fx[key];
   if(cur&&now<cur.until)cur.until+=c.dur*1000;
   else game.fx[key]={id,name:c.name,icon:c.icon,kind:c.kind,val:c.val,label:c.short,start:now,until:now+c.dur*1000};
+  if(c.also){const k2=c.also.kind+'_'+id,c2=game.fx[k2];if(c2&&now<c2.until)c2.until+=c.dur*1000;else game.fx[k2]={id,name:c.name,icon:c.icon,kind:c.also.kind,val:c.also.val,label:c.also.short,start:now,until:now+c.dur*1000}}
   showToast(c.icon+' '+c.name+' · '+c.short+' на '+mmss(c.dur*1000),false);
   sfx('buy');updateUI();renderBuffs();save();FX.tick();
 }
@@ -3102,7 +3121,7 @@ async function showLB(k){
     const d=document.createElement('div'),me=(r.uid&&Store.uid)?r.uid===Store.uid:r.name===Acc.user;
     d.style.cssText='display:flex;justify-content:space-between;gap:8px;padding:9px 12px;margin-bottom:5px;border-radius:10px;font-weight:700;font-size:.85rem;border:1px solid '+(me?'#ffd700':'var(--border)')+';background:'+(me?'rgba(255,215,0,.12)':'var(--card2)');
     const a=document.createElement('span'),b=document.createElement('span');
-    a.textContent=(i<3?['🥇','🥈','🥉'][i]:(i+1)+'.')+' ';{const dot=document.createElement('i');dot.style.cssText='display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle;background:'+(r.on?'#30d158':'#5a5a6a')+(r.on?';box-shadow:0 0 8px #30d158':'');a.append(dot,document.createTextNode(r.name+(me?' (ты)':'')))}
+    a.textContent=(i<3?['🥇','🥈','🥉'][i]:(i+1)+'.')+' ';{const dot=document.createElement('i');dot.style.cssText='display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle;background:'+(r.on?'#30d158':'#5a5a6a')+(r.on?';box-shadow:0 0 8px #30d158':'');a.append(dot,(r.name==='ilya123'?(()=>{const q=document.createElement('span');q.className='gold-nick';q.textContent='👑 '+r.name+(me?' (ты)':'');return q})():document.createTextNode(r.name+(me?' (ты)':''))))}
     b.textContent=fmt(r[k]);b.style.color='var(--accent2)';
     d.append(a,b);list.appendChild(d);
   });
@@ -3506,6 +3525,7 @@ const css=document.createElement('style');css.textContent=`
 .hdr-btn{position:absolute;top:8px;width:40px;height:40px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .ch-list{height:52vh;overflow-y:auto;padding:8px;border-radius:14px;background:var(--card2);border:1px solid var(--border);margin:8px 0;display:flex;flex-direction:column;gap:6px}
 .ch-msg{padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.06);font-size:.84rem;line-height:1.35;word-break:break-word;max-width:92%}
+.gold-nick{background:linear-gradient(90deg,#ffd700,#fff6b0,#ffb800,#ffd700);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;animation:goldsh 2.5s linear infinite}@keyframes goldsh{to{background-position:-200% 0}}
 .ch-msg.me{align-self:flex-end;background:rgba(10,132,255,.25)}.ch-msg b{display:block;font-size:.72rem;margin-bottom:1px}
 .ch-row{display:flex;gap:6px}.ch-row input{flex:1;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:#fff;font:600 .9rem Rubik,sans-serif;min-width:0}
 .el-lock .upgrade-icon{filter:grayscale(1)}
@@ -3516,7 +3536,7 @@ const call=async b=>{const r=await fetch(API,{method:'POST',headers:{'Content-Ty
 const hd=document.querySelector('.header');
 if(hd){
  const lb=document.createElement('button');lb.className='hdr-btn';lb.id='lbBtn';lb.style.left='48px';lb.title='Лидерборд';lb.textContent='🏆';lb.onclick=()=>{$id('lbModal').classList.add('show');showLB()};hd.appendChild(lb);
- const ch=document.createElement('button');ch.className='hdr-btn';ch.id='chatBtn';ch.style.right='48px';ch.title='Чат';ch.textContent='💬';ch.onclick=()=>Chat.open();hd.appendChild(ch);
+ const ch=document.createElement('button');ch.className='hdr-btn';ch.id='chatBtn';ch.style.right='48px';ch.title='Чат';ch.textContent='💬';{const bg=document.createElement('span');bg.id='chatBadge';bg.style.cssText='position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:#ff3b30;color:#fff;font-size:.68rem;font-weight:800;display:none;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(255,59,48,.7);border:2px solid #0f0f17;box-sizing:border-box';ch.appendChild(bg)}ch.onclick=()=>Chat.open();hd.appendChild(ch);
 }
 // ---------- coin slower ----------
 // (patched in source)
@@ -3576,7 +3596,7 @@ const Chat={since:0,timer:null,seen:new Set(),
  hue(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return h},
  add(m){const k=m.ts+m.n+m.t;if(this.seen.has(k))return;this.seen.add(k);
   const box=$id('chatList'),d=document.createElement('div'),b=document.createElement('b'),t=document.createElement('span');
-  d.className='ch-msg'+(m.n===Acc.user?' me':'');b.textContent=m.n;b.style.color='hsl('+this.hue(m.n)+',85%,68%)';t.textContent=m.t;d.append(b,t);
+  d.className='ch-msg'+(m.n===Acc.user?' me':'');if(m.n==='ilya123'){b.className='gold-nick';b.textContent='👑 '+m.n}else{b.textContent=m.n;b.style.color='hsl('+this.hue(m.n)+',85%,68%)'}t.textContent=m.t;d.append(b,t);
   const stick=box.scrollTop+box.clientHeight>=box.scrollHeight-40;box.appendChild(d);if(stick)box.scrollTop=box.scrollHeight},
  async poll(){try{const r=await call({a:'chat_poll',since:this.since});if(r.err==='auth'||!r.msgs)return;r.msgs.forEach(m=>{this.add(m);if(m.ts>this.since)this.since=m.ts});if(!this.since)this.since=r.now}catch(e){}},
  async send(){const i=$id('chatIn'),text=i.value.trim();if(!text)return;i.value='';
@@ -3590,6 +3610,14 @@ const ping=async off=>{if(!Acc.user||!Acc.tok)return;try{const r=await call({a:'
 ping();setInterval(()=>{if(!document.hidden)ping()},25000);
 document.addEventListener('visibilitychange',async()=>{if(document.hidden){try{await Acc.push()}catch(e){}ping(true)}else ping()});
 window.addEventListener('pagehide',()=>{if(Acc.user&&Acc.tok)try{navigator.sendBeacon(API,new Blob([JSON.stringify({a:'ping',off:true,l:Acc.user,t:Acc.tok})],{type:'application/json'}))}catch(e){}});
+Chat.unread=0;
+const bd=()=>{const b=$id('chatBadge');if(!b)return;b.textContent=Chat.unread>99?'99+':Chat.unread;b.style.display=Chat.unread?'flex':'none'};
+const _add=Chat.add.bind(Chat);
+Chat.add=function(m){const isNew=!this.seen.has(m.ts+m.n+m.t);_add(m);if(isNew&&m.n!==Acc.user&&!$id('chatModal').classList.contains('show')){this.unread++;bd()}};
+const _op=Chat.open.bind(Chat);
+Chat.open=async function(){await _op();this.unread=0;bd()};
+setInterval(async()=>{if(!Acc.user||!Acc.tok||document.hidden||$id('chatModal').classList.contains('show'))return;
+ if(!Chat.since){try{const r=await call({a:'ping'});Chat.since=(r&&r.now)||Date.now()}catch(e){return}}Chat.poll()},4000);
 // ---------- logout wipes local progress; login restores it ----------
 Acc.pushStrict=async function(){if(!this.user||!this.tok)return false;try{const r=await call({a:'save',save:JSON.stringify(game),lb:{money:Math.floor(game.balance||0),clicks:Math.floor(game.totalClicks||0),cases:casesAll(),skins:game.ownedSkins.length,ach:Object.keys(game.claimedAch||{}).length,reb:game.rebirths||0}});return !!(r&&r.ok)}catch(e){return false}};
 const _lo=Acc.logout.bind(Acc);
@@ -3599,6 +3627,24 @@ $id('authLogout').onclick=async()=>{
  const go=()=>{ping(true);Acc.logout();refreshAuthBtn();$id('authModal').classList.remove('show');showToast('Ты вышел из аккаунта',false)};
  if(ok)go();else gameMsg('Не удалось сохранить прогресс на сервер. Если выйти сейчас, он пропадёт. Выйти всё равно?',go)};
 })();
+(()=>{
+const API='/.netlify/functions/api';let warned=false;
+const chk=async()=>{if(warned||!Acc.user||!Acc.tok)return;
+ try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({a:'ver',l:Acc.user,t:Acc.tok})}).then(x=>x.json());
+  if(!r||!(r.v>=3)){warned=true;gameMsg('⚠️ Сервер игры устарел, поэтому чат, дуэли и статус «в сети» не работают.\n\nОбнови на GitHub файл netlify/functions/api.mjs новой версией и подожди 1–2 минуты, пока Netlify выложит обновление.')}}
+ catch(e){}};
+setTimeout(chk,3500);setInterval(chk,45000);
+const _s=Chat.send.bind(Chat);
+Chat.send=async function(){const i=$id('chatIn'),t=i.value;await _s();if(i.value===t&&t)setTimeout(chk,0)};
+})();
+(()=>{const bi=document.getElementById('minesBetInput'),h=document.getElementById('minesHalfBtn'),d=document.getElementById('minesDblBtn');if(!bi)return;
+const set=v=>{bi.value=Math.max(1,Math.floor(Math.min(v,game.balance)));bi.dispatchEvent(new Event('input'))};
+if(h)h.onclick=()=>{if(game.balance<1){showToast('Недостаточно средств',false);return}set(game.balance/2)};
+if(d)d.onclick=()=>{if(game.balance<1){showToast('Недостаточно средств',false);return}set((Number(bi.value)||1)*2)}})();
+(()=>{const P={syr_luck:1.5e6,syr_mega:1.5e7,syr_gold:5e7,syr_rage:3e7};let r=0;const inv=game.inventory||{};
+Object.keys(P).forEach(k=>{if(inv[k]>0){r+=inv[k]*P[k];delete inv[k]}});
+if(game.fx)Object.keys(game.fx).forEach(k=>{if(/_syr_/.test(k))delete game.fx[k]});
+if(r>0){game.balance+=r;save();setTimeout(()=>showToast('💉 Шприцы удалены, возврат +'+formatNum(r)+' ₽',false),1500)}})();
 </script>
 </body>
 </html>
