@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -326,7 +326,6 @@ button,#clickZone,#threeCanvas{touch-action:manipulation}
       cursor:pointer;display:flex;align-items:center;justify-content:center;
     ">⚙️</button>
     <h1>Кликер</h1>
-    <div class="sub">тапай · качай · мины · кейсы</div>
   </div>
   <div class="balance-card">
     <div class="balance-label">Твой баланс</div>
@@ -1397,8 +1396,6 @@ function updateUI(full=true){
     {key:'passive',title:'📈 Пассивка',types:['passive','passivemult']},
     {key:'mult',title:'✨ Множители',types:['mult','globalmult']},
     {key:'crit',title:'⚡ Крит и удача',types:['crit','critpower','luck']},
-    {key:'bonus',title:'🎁 Бонусы',types:['minebonus']},
-    {key:'boost',title:'💉 Бусты',types:['boost']},
   ];
   CATS.forEach(cat=>{
     const items=upgrades.filter(u=>u&&cat.types.includes(u.type));
@@ -2306,7 +2303,7 @@ const Scene3D={
     requestAnimationFrame(()=>this.animate());
     if(!this.coin)return;
     const autoOn=this.autoActive||(typeof game!=='undefined'&&game.autoEnabled&&typeof getAutoRate==='function'&&getAutoRate()>0);
-    this.coin.rotation.y+=autoOn?0.035:0.012;
+    this.coin.rotation.y+=autoOn?0.016:0.005;
     this.coin.rotation.x=Math.sin(Date.now()*0.001)*0.15;
     this.hitScale+=(this.targetScale-this.hitScale)*0.2;
     this.coin.scale.setScalar(this.hitScale);
@@ -3105,7 +3102,7 @@ async function showLB(k){
     const d=document.createElement('div'),me=(r.uid&&Store.uid)?r.uid===Store.uid:r.name===Acc.user;
     d.style.cssText='display:flex;justify-content:space-between;gap:8px;padding:9px 12px;margin-bottom:5px;border-radius:10px;font-weight:700;font-size:.85rem;border:1px solid '+(me?'#ffd700':'var(--border)')+';background:'+(me?'rgba(255,215,0,.12)':'var(--card2)');
     const a=document.createElement('span'),b=document.createElement('span');
-    a.textContent=(i<3?['🥇','🥈','🥉'][i]:(i+1)+'.')+' '+r.name+(me?' (ты)':'');
+    a.textContent=(i<3?['🥇','🥈','🥉'][i]:(i+1)+'.')+' ';{const dot=document.createElement('i');dot.style.cssText='display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle;background:'+(r.on?'#30d158':'#5a5a6a')+(r.on?';box-shadow:0 0 8px #30d158':'');a.append(dot,document.createTextNode(r.name+(me?' (ты)':'')))}
     b.textContent=fmt(r[k]);b.style.color='var(--accent2)';
     d.append(a,b);list.appendChild(d);
   });
@@ -3126,7 +3123,7 @@ function NewInit(){ExtraPack.init();
     const b=$id('authGo');b.disabled=true;$id('authMsg').textContent='Подождите…';
     let r;try{r=await Acc.auth($id('authLogin').value,$id('authPass').value)}catch(e){r='Ошибка, попробуйте ещё раз'}
     b.disabled=false;
-    if(r==='ok'){refreshAuthBtn();$id('authModal').classList.remove('show');showToast('✅ Аккаунт: '+Acc.user,false)}else $id('authMsg').textContent=r;
+    if(r==='ok'){refreshAuthBtn();$id('authModal').classList.remove('show');showToast('✅ Аккаунт: '+(Acc.user||$id('authLogin').value.trim().toLowerCase()),false)}else $id('authMsg').textContent=r;
   };
   $id('indexClose').onclick=$id('indexClose2').onclick=()=>$id('indexModal').classList.remove('show');
   $id('openLB').onclick=()=>{$id('lbModal').classList.add('show');showLB()};
@@ -3143,7 +3140,7 @@ Acc.tok=localStorage.getItem('clickerTok')||null;
 Acc.push=async function(){
   if(!this.user||!this.tok||this._p)return;this._p=true;
   try{const r=await call({a:'save',l:this.user,t:this.tok,save:JSON.stringify(game),lb:{money:Math.floor(game.balance||0),clicks:Math.floor(game.totalClicks||0),cases:casesAll(),skins:game.ownedSkins.length,ach:Object.keys(game.claimedAch||{}).length,reb:game.rebirths||0}});
-    if(r&&r.err==='auth'){this.logout();refreshAuthBtn();showToast('Сессия истекла — войди снова',false)}}
+    if(r&&r.err==='auth'){this.logout(true);refreshAuthBtn();showToast('Сессия истекла — войди снова',false)}}
   catch(e){}finally{this._p=false}
 };
 Acc.auth=async function(l,p){
@@ -3295,102 +3292,96 @@ if($id('slotsModal'))C2.smBuild();
 (()=>{
 const css=document.createElement('style');css.textContent=`
 .dl-card{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;margin-bottom:6px;border-radius:12px;background:var(--card2);border:1px solid var(--border);font-weight:700;font-size:.82rem}
-.dl-arena{display:flex;gap:10px;margin:10px 0}.dl-side{flex:1;text-align:center;padding:12px 6px;border-radius:16px;background:linear-gradient(160deg,#1c1c3a,#0c0c1c);border:2px solid #2a2a4a;min-height:170px}
+.dl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:6px 0}
+.dl-cs{padding:9px 6px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:#fff;font:800 .74rem Rubik,sans-serif;cursor:pointer;text-align:center}
+.dl-cs small{display:block;color:var(--accent2);font-size:.68rem;margin-top:2px}.dl-cs:active{transform:scale(.95)}
+.dl-list{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0;min-height:34px}
+.dl-chip{padding:6px 10px;border-radius:20px;background:linear-gradient(135deg,#ff2d55,#ff9f0a);font:800 .74rem Rubik,sans-serif;cursor:pointer}
+.dl-arena{display:flex;gap:8px;margin:10px 0}.dl-side{flex:1;padding:10px 6px;border-radius:16px;background:linear-gradient(160deg,#1c1c3a,#0c0c1c);border:2px solid #2a2a4a}
 .dl-side.win{border-color:#ffd60a;box-shadow:0 0 24px rgba(255,214,10,.55)}.dl-side.lose{opacity:.5}
-.dl-q{font-size:3rem;font-weight:900;color:#c4b5fd;text-shadow:0 0 18px #8b5cf6;animation:rlQ 1.4s infinite}
-.dl-vs{align-self:center;font-weight:900;font-size:1.3rem;color:var(--accent)}
+.dl-head{text-align:center;font-weight:800;font-size:.78rem}.dl-tot{text-align:center;font-weight:900;color:var(--accent2);font-size:.95rem;margin:2px 0 8px}
+.dl-row{display:flex;align-items:center;gap:6px;padding:5px;margin-bottom:4px;border-radius:10px;background:rgba(255,255,255,.05);min-height:42px;font-size:.7rem;font-weight:800}
+.dl-row img{width:34px;height:34px;border-radius:50%}.dl-row .q{font-size:1.3rem;color:#c4b5fd;text-shadow:0 0 10px #8b5cf6;margin:0 auto}
+.dl-row.flip{animation:rlFlip .5s cubic-bezier(.2,.9,.3,1.3)}
+.dl-vs{align-self:center;font-weight:900;font-size:1.1rem;color:var(--accent)}
 .dl-res{text-align:center;font-weight:900;font-size:1.05rem;min-height:30px;margin:6px 0}
+.new-badge{position:absolute;top:-9px;right:14px;padding:3px 9px;border-radius:20px;background:linear-gradient(135deg,#ff2d55,#ff9f0a);color:#fff;font:900 .64rem Rubik,sans-serif;letter-spacing:.06em;box-shadow:0 0 14px #ff2d55;animation:dlPulse 1.1s infinite}
+@keyframes dlPulse{50%{transform:scale(1.14);box-shadow:0 0 22px #ff9f0a}}
 `;document.head.appendChild(css);
 const API='/.netlify/functions/api';
 const call=async b=>{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({l:Acc.user,t:Acc.tok},b))});return r.json()};
-window.Duel={busy:false,timer:null,pending:false,polling:false,playing:{},wait:null,
-done(){game.duelDone=game.duelDone||{};return game.duelDone},
-markDone(id){const d=this.done();d[id]=1;const k=Object.keys(d);if(k.length>100)k.slice(0,k.length-100).forEach(x=>delete d[x])},
-skin(n,r){const C=CASE_CFG[n],ch=C.ch;let acc=0,rar=Object.keys(ch)[0];const x=r.r1*100;for(const k in ch){acc+=ch[k];if(x<=acc){rar=k;break}}const pool=C.pool().filter(s=>s.rarity===rar);return pool[Math.floor(r.r2*pool.length)]||C.pool()[0]},
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+window.Duel={busy:false,timer:null,pick:[],last:'',
+sorted(){return Object.keys(CASE_CFG).map(Number).filter(n=>CASE_CFG[n]).sort((a,b)=>CASE_CFG[a].price()-CASE_CFG[b].price())},
+total(cs){return cs.reduce((a,n)=>a+CASE_CFG[n].price(),0)},
+skin(n,r){const C=CASE_CFG[n],ch=Cases.chances(n,true);let acc=0,rar=Object.keys(ch)[0];const x=r.r1*100;for(const k in ch){acc+=ch[k];if(x<=acc){rar=k;break}}const pool=C.pool().filter(s=>s.rarity===rar);return pool[Math.floor(r.r2*pool.length)]||C.pool()[0]},
 init(){
- const ub=$id('caseUpgBtn'),b=document.createElement('button');b.className='btn-plain';b.id='hubDuel';b.style.cssText='width:100%;margin-top:12px;padding:14px;border-color:#ff2d55';b.textContent='⚔️ Дуэли на кейсах';b.onclick=()=>{if(Cases.rolling)return;this.open()};ub.parentNode.insertBefore(b,ub);
+ const hc=$id('hubCasino'),b=document.createElement('button');b.className='mini-btn';b.id='hubDuel';b.style.cssText='margin:0;position:relative;background:linear-gradient(135deg,#ff2d55,#ff9f0a);box-shadow:0 5px 20px rgba(255,45,85,.45)';b.innerHTML='⚔️ Дуэли<span class="new-badge">NEW</span>';
+ b.onclick=()=>{$id('funHubModal').classList.remove('show');this.open()};hc.parentNode.insertBefore(b,hc);
  const o=document.createElement('div');o.className='modal-overlay';o.id='duelModal';
- o.innerHTML='<div class="modal" style="max-width:440px"><div class="cf-head"><h2 style="background:linear-gradient(90deg,#ff2d55,#ff9f0a);-webkit-background-clip:text;color:transparent">⚔️ Дуэли на кейсах</h2><button class="cf-x" id="duelX">✕</button></div><div class="hint">Оба платят цену кейса и открывают по одному. У кого скин сильнее — тот забирает оба скина. Ничья — каждый оставляет свой.</div><div id="duelBody"></div></div>';
- document.body.appendChild(o);$id('duelX').onclick=()=>{if(this.busy||this.pending){showToast('Дождись конца дуэли',false);return}this.close()};
+ o.innerHTML='<div class="modal" style="max-width:440px"><div class="cf-head"><h2 style="background:linear-gradient(90deg,#ff2d55,#ff9f0a);-webkit-background-clip:text;color:transparent">⚔️ Дуэли на кейсах</h2><button class="cf-x" id="duelX">✕</button></div><div class="hint">Оба платят цену выбранных кейсов и открывают их. У кого больше сумма множителей — тот забирает ВСЕ скины. Ничья — каждый оставляет свои.</div><div id="duelBody"></div></div>';
+ document.body.appendChild(o);$id('duelX').onclick=()=>{if(this.busy){showToast('Дождись конца дуэли',false);return}this.close()};
  setTimeout(()=>{if(Acc.user&&Acc.tok)this.poll(true)},4000)},
-open(){$id('casesModal').classList.remove('show');$id('duelModal').classList.add('show');clearInterval(this.timer);this.timer=setInterval(()=>this.poll(),2000);this.poll()},
-close(){$id('duelModal').classList.remove('show');clearInterval(this.timer);$id('casesModal').classList.add('show');Cases.showLobby()},
-busyUI(t){$id('duelBody').innerHTML='<div class="hint" style="font-size:.95rem;padding:26px 0;font-weight:800">'+t+'</div>'},
+open(){$id('duelModal').classList.add('show');this.last='';this.poll();clearInterval(this.timer);this.timer=setInterval(()=>this.poll(),2500)},
+close(){$id('duelModal').classList.remove('show');clearInterval(this.timer);$id('funHubModal').classList.add('show')},
 async poll(silent){
- if(this.polling||this.pending)return;
  if(!Acc.user||!Acc.tok){if(!silent)this.noAuth();return}
- if(window.Cases&&Cases.rolling)return;
- this.polling=true;
- try{
-  let r;try{r=await call({a:'duel_list'})}catch(e){if(!silent&&!this.wait&&!this.busy)$id('duelBody').innerHTML='<div class="hint">Нет связи с сервером</div>';return}
-  if(r.err==='auth'){if(!silent)this.noAuth();return}
-  if(this.busy||this.pending||!r.mine)return;
-  const dn=this.done(),rd=r.mine.find(d=>d.st==='ready'&&!dn[d.id]&&!this.playing[d.id]);
-  if(rd){this.play(rd);return}
-  const rf=r.mine.find(d=>d.a===Acc.user&&(d.st==='cancelled'||d.st==='expired')&&!dn['r'+d.id]);
-  if(rf){try{const s=await call({a:'duel_settle',id:rf.id});this.markDone('r'+rf.id);if(s.kind==='refund'){game.balance+=s.price;showToast('Ставка возвращена: +'+formatNum(s.price)+' ₽',false);updateUI();save()}}catch(e){}}
-  if(!silent&&$id('duelModal').classList.contains('show'))this.render(r);
- }finally{this.polling=false}
-},
-noAuth(){$id('duelBody').innerHTML='<div class="hint">Для дуэлей нужен аккаунт.</div>';const b=document.createElement('button');b.className='btn-plain';b.style.width='100%';b.textContent='👤 Войти / зарегистрироваться';b.onclick=()=>{$id('duelModal').classList.remove('show');openAuth()};$id('duelBody').appendChild(b)},
+ let r;try{r=await call({a:'duel_list'})}catch(e){if(!silent)$id('duelBody').innerHTML='<div class="hint">Нет связи с сервером</div>';return}
+ if(r.err==='auth'){if(!silent)this.noAuth();return}
+ if(this.busy||!r.mine)return;
+ const rd=r.mine.find(d=>d.st==='ready');if(rd){this.play(rd);return}
+ const rf=r.mine.find(d=>d.a===Acc.user&&(d.st==='cancelled'||d.st==='expired'));if(rf){const s=await call({a:'duel_settle',id:rf.id});if(s.kind==='refund'){game.balance+=s.price;showToast('Ставка возвращена: +'+formatNum(s.price)+' ₽',false);updateUI();save()}}
+ if(silent)return;const key=JSON.stringify([r.open,r.mine]);if(key===this.last)return;this.last=key;this.render(r)},
+noAuth(){const B=$id('duelBody');B.innerHTML='<div class="hint">Для дуэлей нужен аккаунт.</div>';const b=document.createElement('button');b.className='btn-plain';b.style.width='100%';b.textContent='👤 Войти / зарегистрироваться';b.onclick=()=>openAuth();B.appendChild(b)},
+em(n){return CASE_CFG[n].emoji||'📦'},
 render(r){
- const B=$id('duelBody');B.innerHTML='';
- let mine=(r.mine||[]).find(d=>d.st==='open');
- if(mine)this.wait=null;
- else if(this.wait){if(Date.now()-this.wait.t<90000)mine={n:this.wait.n,price:this.wait.price,id:this.wait.id};else this.wait=null}
- if(mine){const C=CASE_CFG[mine.n],d=document.createElement('div');d.className='dl-card';d.innerHTML='<span>⏳ Ждём соперника · '+C.title+' · '+formatNum(mine.price)+' ₽</span>';
-  if(mine.id){const c=document.createElement('button');c.className='btn-plain';c.textContent='Отмена';c.onclick=async()=>{c.disabled=true;try{await call({a:'duel_cancel',id:mine.id})}catch(e){}this.wait=null;this.poll()};d.appendChild(c)}
-  B.appendChild(d)}
- else{B.insertAdjacentHTML('beforeend','<div style="font-weight:800;margin:8px 0">Создать дуэль</div>');const g=document.createElement('div');g.className='cg-chips';
-  for(let n=1;n<=10;n++){const C=CASE_CFG[n];if(!C)continue;const b=document.createElement('button');b.className='btn-plain';b.textContent=(C.emoji||'📦')+' '+formatNum(C.price())+' ₽';b.onclick=()=>this.create(n);g.appendChild(b)}B.appendChild(g)}
- B.insertAdjacentHTML('beforeend','<div style="font-weight:800;margin:12px 0 6px">Открытые дуэли</div>');
- const open=(r.open||[]).filter(d=>d.a!==Acc.user);
- if(!open.length)B.insertAdjacentHTML('beforeend','<div class="hint">Пока никого. Создай свою — соперник появится в списке.</div>');
- open.forEach(d=>{const C=CASE_CFG[d.n];if(!C)return;const el=document.createElement('div');el.className='dl-card';el.innerHTML='<span>'+(C.emoji||'📦')+' '+C.title+'<br><small style="color:var(--muted)">'+d.a+' · '+formatNum(d.price)+' ₽</small></span>';const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='padding:8px 14px;font-size:.8rem';b.textContent='Вступить';b.onclick=()=>this.join(d);el.appendChild(b);B.appendChild(el)})},
-async create(n){
- if(this.pending||this.wait||this.busy)return;
- const price=CASE_CFG[n].price();if(game.balance<price){showToast('Не хватает баланса',false);return}
- this.pending=true;this.busyUI('⏳ Создаём дуэль… не закрывай окно');
- game.balance-=price;updateUI();save();
- let r;try{r=await call({a:'duel_create',n,price})}catch(e){r={err:'Нет связи',net:true}}
- if(r.err){let ok=false;
-  if(r.net){try{const l=await call({a:'duel_list'});ok=!!(l.mine&&l.mine.find(d=>d.st==='open'&&d.a===Acc.user))}catch(e){}}
-  if(!ok){game.balance+=price;updateUI();save();showToast(r.err,false);this.pending=false;this.poll();return}}
- this.wait={n,price,id:r&&(r.id||(r.duel&&r.duel.id)),t:Date.now()};
- this.pending=false;showToast('Дуэль создана. Ждём соперника',false);this.render({mine:[],open:[]});this.poll()},
-async join(d){
- if(this.pending||this.busy)return;
- if(game.balance<d.price){showToast('Не хватает баланса',false);return}
- this.pending=true;this.busyUI('⏳ Вступаем в дуэль… не закрывай окно');
- game.balance-=d.price;updateUI();save();
- let r;try{r=await call({a:'duel_join',id:d.id})}catch(e){r={err:'Нет связи',net:true}}
- if(r.err&&r.net){try{const l=await call({a:'duel_list'});if(l.mine&&l.mine.find(x=>x.id===d.id&&(x.st==='ready'||x.st==='done')))r={}}catch(e){}}
- if(r.err){game.balance+=d.price;updateUI();save();showToast(r.err,false);this.pending=false;this.poll();return}
- this.pending=false;this.poll()},
+ r=r||this.r;this.r=r;const B=$id('duelBody');B.innerHTML='';const mine=r.mine.find(d=>d.st==='open');
+ if(mine){const d=document.createElement('div');d.className='dl-card';d.innerHTML='<span>⏳ Ждём соперника<br><small style="color:var(--muted)">'+mine.cs.map(n=>this.em(n)).join(' ')+' · '+formatNum(mine.price)+' ₽</small></span>';const c=document.createElement('button');c.className='btn-plain';c.textContent='Отмена';c.onclick=async()=>{await call({a:'duel_cancel',id:mine.id});this.last='';this.poll()};d.appendChild(c);B.appendChild(d)}
+ else{
+  B.insertAdjacentHTML('beforeend','<div style="font-weight:800;margin:8px 0 2px">Создать дуэль · от 1 до 5 кейсов</div><div class="hint" style="margin:0">Нажимай на кейсы — можно брать разные</div>');
+  const g=document.createElement('div');g.className='dl-grid';
+  this.sorted().forEach(n=>{const C=CASE_CFG[n],b=document.createElement('button');b.className='dl-cs';b.style.borderColor=C.col||'';b.innerHTML=this.em(n)+' '+C.title+'<small>'+formatNum(C.price())+' ₽</small>';
+   b.onclick=()=>{if(this.pick.length>=5){showToast('Максимум 5 кейсов',false);return}this.pick.push(n);this.render()};g.appendChild(b)});B.appendChild(g);
+  const l=document.createElement('div');l.className='dl-list';
+  if(!this.pick.length)l.innerHTML='<span class="hint" style="margin:0">Кейсы не выбраны</span>';
+  this.pick.forEach((n,i)=>{const c=document.createElement('span');c.className='dl-chip';c.textContent=this.em(n)+' '+CASE_CFG[n].title+' ✕';c.onclick=()=>{this.pick.splice(i,1);this.render()};l.appendChild(c)});B.appendChild(l);
+  const q=document.createElement('div');q.className='cg-chips';q.style.marginBottom='8px';
+  [2,3,4,5].forEach(k=>{const b=document.createElement('button');b.className='btn-plain';b.textContent='×'+k;b.onclick=()=>{const n=this.pick[this.pick.length-1];if(!n){showToast('Сначала выбери кейс',false);return}this.pick=Array(k).fill(n);this.render()};q.appendChild(b)});
+  const cl=document.createElement('button');cl.className='btn-plain';cl.textContent='Очистить';cl.onclick=()=>{this.pick=[];this.render()};q.appendChild(cl);B.appendChild(q);
+  const go=document.createElement('button');go.className='btn-case-open';go.style.width='100%';go.disabled=!this.pick.length;go.style.opacity=this.pick.length?'1':'.5';
+  go.textContent=this.pick.length?'⚔️ Создать · '+this.pick.length+' кейс. · '+formatNum(this.total(this.pick))+' ₽':'Выбери кейсы';go.onclick=()=>this.create();B.appendChild(go)}
+ B.insertAdjacentHTML('beforeend','<div style="font-weight:800;margin:14px 0 6px">Открытые дуэли</div>');
+ if(!r.open.length)B.insertAdjacentHTML('beforeend','<div class="hint">Пока никого. Создай свою — соперник появится в списке.</div>');
+ r.open.forEach(d=>{const el=document.createElement('div');el.className='dl-card';el.innerHTML='<span>'+d.cs.map(n=>this.em(n)).join(' ')+' <small style="color:var(--muted)">×'+d.cs.length+'</small><br><small style="color:var(--muted)">'+d.a+' · '+formatNum(d.price)+' ₽</small></span>';const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='padding:8px 14px;font-size:.8rem';b.textContent='Вступить';b.onclick=()=>this.join(d);el.appendChild(b);B.appendChild(el)})},
+async create(){const cs=[...this.pick],price=this.total(cs);if(!cs.length)return;if(game.balance<price){showToast('Не хватает баланса',false);return}
+ game.balance-=price;updateUI();save();let r;try{r=await call({a:'duel_create',cs,price})}catch(e){r={err:'Нет связи'}}
+ if(r.err){game.balance+=price;updateUI();save();showToast(r.err,false);return}this.pick=[];showToast('Дуэль создана. Ждём соперника',false);this.last='';this.poll()},
+async join(d){if(game.balance<d.price){showToast('Не хватает баланса',false);return}
+ game.balance-=d.price;updateUI();save();let r;try{r=await call({a:'duel_join',id:d.id})}catch(e){r={err:'Нет связи'}}
+ if(r.err){game.balance+=d.price;updateUI();save();showToast(r.err,false);this.last='';this.poll();return}this.last='';this.poll()},
 async play(d){
- if(this.playing[d.id]||this.done()[d.id])return;
- this.playing[d.id]=1;this.busy=true;this.wait=null;
- const B=$id('duelBody'),me=Acc.user,sa=this.skin(d.n,d.ra),sb=this.skin(d.n,d.rb),C=CASE_CFG[d.n];
- $id('casesModal').classList.remove('show');$id('duelModal').classList.add('show');clearInterval(this.timer);
- const side=(name,i)=>'<div class="dl-side" id="dlS'+i+'"><div style="font-weight:800;font-size:.8rem;margin-bottom:10px">'+name+(name===me?' (ты)':'')+'</div><div class="dl-q">?</div></div>';
- B.innerHTML='<div class="dl-arena">'+side(d.a,0)+'<div class="dl-vs">VS</div>'+side(d.b,1)+'</div><div class="dl-res" id="dlRes">'+C.title+' · открываем…</div>';
+ this.busy=true;const B=$id('duelBody'),me=Acc.user,cs=d.cs,SA=cs.map((n,i)=>this.skin(n,d.ra[i])),SB=cs.map((n,i)=>this.skin(n,d.rb[i]));
+ $id('duelModal').classList.add('show');clearInterval(this.timer);
+ const rows=k=>cs.map((n,i)=>'<div class="dl-row" id="dl'+k+i+'"><span>'+this.em(n)+'</span><span class="q">?</span></div>').join('');
+ const side=(name,k)=>'<div class="dl-side" id="dlS'+k+'"><div class="dl-head">'+name+(name===me?' (ты)':'')+'</div><div class="dl-tot" id="dlT'+k+'">0%</div>'+rows(k)+'</div>';
+ B.innerHTML='<div class="dl-arena">'+side(d.a,'A')+'<div class="dl-vs">VS</div>'+side(d.b,'B')+'</div><div class="dl-res" id="dlRes">Открываем '+cs.length+' кейс.…</div>';
  try{SFX.caseOpen()}catch(e){}
- const rev=(i,s)=>{const el=$id('dlS'+i),col=C.cl[s.rarity]||'#888';el.querySelector('.dl-q').outerHTML='<div class="rl-item flip" style="height:auto;width:auto;margin:auto;border:none;background:none"><img src="'+coinURL(s,140)+'" style="width:72px;height:72px;border-radius:50%;filter:drop-shadow(0 0 14px '+col+')"><div style="font-weight:800;font-size:.8rem">'+s.name+'</div><div style="font-weight:800;font-size:.72rem;color:'+visCol(col)+'">+'+s.mult+'%</div></div>';try{SFX.win()}catch(e){}};
- await new Promise(r=>setTimeout(r,1800));rev(0,sa);await new Promise(r=>setTimeout(r,1400));rev(1,sb);await new Promise(r=>setTimeout(r,900));
- let s;try{s=await call({a:'duel_settle',id:d.id})}catch(e){s={err:'net'}}
- if(s.err){B.innerHTML='<div class="hint">Не удалось завершить дуэль. Открой раздел заново.</div>';this.busy=false;delete this.playing[d.id];return}
- this.markDone(d.id);
- const iA=me===d.a,my=iA?sa:sb,op=iA?sb:sa,tie=sa.mult===sb.mult,won=my.mult>op.mult;
- if(tie)SkinUtil.give(my.id);else if(won){SkinUtil.give(my.id);SkinUtil.give(op.id)}
- game[C.cnt]=(game[C.cnt]||0)+1;game.duels=(game.duels||0)+1;if(won)game.duelWins=(game.duelWins||0)+1;
+ let tA=0,tB=0;const rev=(k,i,s)=>{const el=$id('dl'+k+i),col=CASE_CFG[cs[i]].cl[s.rarity]||'#888';el.className='dl-row flip';el.innerHTML='<img src="'+coinURL(s,80)+'" style="filter:drop-shadow(0 0 6px '+col+')"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.name+'</span><span style="color:'+visCol(col)+'">+'+s.mult+'%</span>';try{sfx('click')}catch(e){}};
+ await wait(1200);
+ for(let i=0;i<cs.length;i++){rev('A',i,SA[i]);tA+=SA[i].mult;$id('dlTA').textContent=tA+'%';await wait(650);rev('B',i,SB[i]);tB+=SB[i].mult;$id('dlTB').textContent=tB+'%';await wait(750)}
+ const s=await call({a:'duel_settle',id:d.id});
+ if(s.err){B.innerHTML='<div class="hint">Не удалось завершить дуэль. Открой раздел заново.</div>';this.busy=false;return}
+ const iA=me===d.a,my=iA?SA:SB,op=iA?SB:SA,mt=iA?tA:tB,ot=iA?tB:tA,tie=mt===ot,won=mt>ot;
+ if(tie)my.forEach(x=>SkinUtil.give(x.id));else if(won){my.forEach(x=>SkinUtil.give(x.id));op.forEach(x=>SkinUtil.give(x.id))}
+ cs.forEach(n=>{const C=CASE_CFG[n];game[C.cnt]=(game[C.cnt]||0)+1});game.duels=(game.duels||0)+1;if(won)game.duelWins=(game.duelWins||0)+1;
  const res=$id('dlRes');res.style.color=tie?'#ffd60a':won?'#30d158':'#ff453a';
- res.textContent=tie?'🤝 Ничья — каждый оставляет свой скин':won?'🏆 Победа! Ты забрал оба скина':'💀 Поражение — соперник забрал оба скина';
- $id('dlS'+(iA?0:1)).classList.add(won?'win':tie?'':'lose');if(!tie)$id('dlS'+(iA?1:0)).classList.add(won?'lose':'win');
+ res.textContent=tie?'🤝 Ничья — каждый оставляет свои скины':won?'🏆 Победа! Ты забрал все '+(cs.length*2)+' скинов':'💀 Поражение — соперник забрал все скины';
+ $id('dlS'+(iA?'A':'B')).classList.add(won?'win':tie?'x':'lose');if(!tie)$id('dlS'+(iA?'B':'A')).classList.add(won?'lose':'win');
  try{won?SFX.caseWin():SFX.lose()}catch(e){}
  updateUI();checkAchievements();save();try{Acc.push()}catch(e){}
- const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='width:100%;margin-top:8px';b.textContent='Ок';b.onclick=()=>{this.busy=false;delete this.playing[d.id];this.open()};B.appendChild(b)}
+ const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='width:100%;margin-top:8px';b.textContent='Ок';b.onclick=()=>{this.busy=false;this.open()};B.appendChild(b)}
 };
-achievements.push({id:'duel1',name:'Дуэлянт',desc:'Сыграй 1 дуэль (Кейсы → Дуэли)',icon:'⚔️',check:()=>(game.duels||0)>=1,reward:1e6,rarity:'common'},{id:'duelw5',name:'Гроза арены',desc:'Выиграй 5 дуэлей',icon:'🏆',check:()=>(game.duelWins||0)>=5,reward:5e8,rarity:'epic'});
+achievements.push({id:'duel1',name:'Дуэлянт',desc:'Сыграй 1 дуэль (Развлечения → Дуэли)',icon:'⚔️',check:()=>(game.duels||0)>=1,reward:1e6,rarity:'common'},{id:'duelw5',name:'Гроза арены',desc:'Выиграй 5 дуэлей',icon:'🏆',check:()=>(game.duelWins||0)>=5,reward:5e8,rarity:'epic'});
 Duel.init();
 })();
 
@@ -3487,6 +3478,126 @@ achievements.push(...add);
  });
  achievements.length=0;achievements.push(...sorted);
 })();
+})();
+(()=>{
+const css=document.createElement('style');css.textContent=`
+#indexClose2{position:sticky;top:0;width:100%;margin:0 0 10px;padding:13px 16px;border:none;border-radius:16px;z-index:5;color:#fff;font:900 .95rem Rubik,sans-serif;letter-spacing:.04em;cursor:pointer;background:linear-gradient(135deg,#ff2d95,#7c3aed 55%,#0a84ff);box-shadow:0 6px 22px rgba(124,58,237,.55),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s,box-shadow .15s}
+#indexClose2:active{transform:scale(.96);box-shadow:0 2px 10px rgba(124,58,237,.5)}
+#indexModal .modal-actions{display:none!important}`;document.head.appendChild(css);
+// ---- skins: casino prizes only from NON-case skins ----
+const NC=()=>{const m={};[...UPG_SKINS,...(window.XN30||[]),...(window.XN150||[]),...(window.CZ||[])].forEach(s=>{if(s.mult>0)m[s.id]=s});return Object.values(m)};
+window.NONCASE=NC;
+SkinUtil.list=()=>NC();
+Upgrader.allSkins=()=>NC();
+CasinoDrop.pick=function(){const P=NC(),w=P.map(s=>1/s.mult),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<P.length;i++){r-=w[i];if(r<=0)return P[i]}return P[0]};
+// ---- cases lobby: weakest -> strongest ----
+Cases.sortTiles=function(){
+  const t3=$id('selCase3');if(!t3)return;const g=t3.parentNode,ids=Object.keys(CASE_CFG).map(Number).filter(n=>CASE_CFG[n]&&$id('selCase'+n));
+  const ref=[...g.children].find(c=>!/^selCase/.test(c.id));
+  ids.sort((a,b)=>CASE_CFG[a].price()-CASE_CFG[b].price()).forEach(n=>g.insertBefore($id('selCase'+n),ref||null));
+};
+['showLobby','refresh'].forEach(k=>{const f=Cases[k];if(typeof f==='function')Cases[k]=function(){const r=f.apply(this,arguments);try{this.sortTiles()}catch(e){}return r}});
+Cases.sortTiles();setTimeout(()=>{try{Cases.sortTiles()}catch(e){}},1500);
+})();
+(()=>{
+const css=document.createElement('style');css.textContent=`
+.balance-card{margin-top:0!important}.header{margin-bottom:0!important}
+#openLB{display:none!important}
+.hdr-btn{position:absolute;top:8px;width:40px;height:40px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ch-list{height:52vh;overflow-y:auto;padding:8px;border-radius:14px;background:var(--card2);border:1px solid var(--border);margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.ch-msg{padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.06);font-size:.84rem;line-height:1.35;word-break:break-word;max-width:92%}
+.ch-msg.me{align-self:flex-end;background:rgba(10,132,255,.25)}.ch-msg b{display:block;font-size:.72rem;margin-bottom:1px}
+.ch-row{display:flex;gap:6px}.ch-row input{flex:1;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:#fff;font:600 .9rem Rubik,sans-serif;min-width:0}
+.el-lock .upgrade-icon{filter:grayscale(1)}
+`;document.head.appendChild(css);
+const API='/.netlify/functions/api';
+const call=async b=>{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({l:Acc.user,t:Acc.tok},b))});return r.json()};
+// ---------- header buttons ----------
+const hd=document.querySelector('.header');
+if(hd){
+ const lb=document.createElement('button');lb.className='hdr-btn';lb.id='lbBtn';lb.style.left='48px';lb.title='Лидерборд';lb.textContent='🏆';lb.onclick=()=>{$id('lbModal').classList.add('show');showLB()};hd.appendChild(lb);
+ const ch=document.createElement('button');ch.className='hdr-btn';ch.id='chatBtn';ch.style.right='48px';ch.title='Чат';ch.textContent='💬';ch.onclick=()=>Chat.open();hd.appendChild(ch);
+}
+// ---------- coin slower ----------
+// (patched in source)
+// ---------- remove bonus/boost effects ----------
+window.getMineBonus=()=>1;
+// ---------- elite upgrades ----------
+const EL=[
+ {id:'ek1',ic:'⚡',nm:'Импульс кванта',ds:'Усиливает каждый клик',P:2e14,tx:l=>'клики ×'+(1+.2*l).toFixed(1)},
+ {id:'ek2',ic:'👊',nm:'Кулак титана',ds:'Мощный множитель кликов',P:5e14,tx:l=>'клики ×'+(1+.4*l).toFixed(1)},
+ {id:'em1',ic:'✖️',nm:'Резонанс',ds:'Общий множитель дохода',P:3e14,tx:l=>'множитель ×'+(1+.1*l).toFixed(1)},
+ {id:'em2',ic:'🌌',nm:'Сингулярность',ds:'Огромный множитель дохода',P:7.5e14,tx:l=>'множитель ×'+(1+.2*l).toFixed(1)},
+ {id:'ec1',ic:'🎯',nm:'Точный удар',ds:'Шанс крита',P:4e14,tx:l=>'крит +'+(.5*l).toFixed(1)+'%'},
+ {id:'ec2',ic:'💥',nm:'Разрушитель',ds:'Сила крита',P:9e14,tx:l=>'сила крита +'+(.25*l).toFixed(2)},
+ {id:'el1',ic:'🍀',nm:'Клевер',ds:'Удача в кейсах',P:6e14,tx:l=>'удача +'+(.04*l*100).toFixed(0)+'%'},
+ {id:'el2',ic:'🔮',nm:'Провидец',ds:'Большая удача в кейсах',P:1e15,tx:l=>'удача +'+(.12*l*100).toFixed(0)+'%'}
+];
+EL.forEach(e=>{e.mx=30;e.col='#'+['ffd60a','ff9f0a','bf5af2','ff2d95','30d158','64d2ff','a3e635','5ac8fa'][EL.indexOf(e)]});
+const L=id=>(game.upgrades&&game.upgrades[id])||0;
+const _cp=getClickPower,_gm=getMultiplier,_cc=getCritChance,_cw=getCritPower,_cl=getCaseLuck;
+window.getClickPower=()=>_cp()*(1+.2*L('ek1'))*(1+.4*L('ek2'));
+window.getMultiplier=()=>_gm()*(1+.1*L('em1'))*(1+.2*L('em2'));
+window.getCritChance=()=>Math.min(100,_cc()+.5*L('ec1'));
+window.getCritPower=()=>_cw()+.25*L('ec2');
+window.getCaseLuck=()=>_cl()+.5*L('el1')+1.5*L('el2');
+const lvCost=(e,l)=>Math.floor(e.P*.02*Math.pow(1.3,l));
+const lvBulk=(e,q)=>{let t=0;const l=L(e.id);for(let i=0;i<q;i++)t+=lvCost(e,l+i);return t};
+function renderElite(){
+ const list=$id('upgradeList');if(!list)return;game.eliteOpen=game.eliteOpen||{};game._openCats=game._openCats||{};
+ const open=!!game._openCats.elite,head=document.createElement('div');
+ head.style.cssText='font-weight:800;font-size:0.82rem;color:#fff;margin:10px 0 6px;padding:10px 12px;background:linear-gradient(135deg,#3b0764,#1e1b4b);border-radius:10px;border:1px solid #a78bfa;cursor:pointer;display:flex;justify-content:space-between;align-items:center';
+ head.innerHTML='<span>👑 Элитные · от 200T до 1Qa</span><span style="color:var(--muted);font-size:.75rem">'+(open?'▲':'▼')+' '+EL.length+'</span>';
+ head.onclick=()=>{game._openCats.elite=!game._openCats.elite;updateUI()};list.appendChild(head);if(!open)return;
+ EL.forEach(e=>{
+  const on=!!game.eliteOpen[e.id],lvl=L(e.id),card=document.createElement('div');card.className='upgrade-card'+(on?'':' el-lock');
+  if(!on){
+   card.innerHTML='<div class="upgrade-icon" style="background:#a78bfa22">❓</div><div class="upgrade-info"><div class="upgrade-name">???</div><div class="upgrade-desc">Секретное улучшение. Купи, чтобы открыть</div><div class="upgrade-level">🔒 закрыто</div></div><button class="buy-btn el-buy" data-c="'+e.P+'" '+(game.balance>=e.P?'':'disabled')+'>🔓 '+formatNum(e.P)+' ₽</button>';
+   card.querySelector('button').onclick=()=>{if(game.balance<e.P)return;game.balance-=e.P;game.eliteOpen[e.id]=true;try{SFX.buy()}catch(x){}showToast('🔓 Открыто: '+e.nm,false);save();updateUI()};
+  }else{
+   const q=Math.max(1,Math.min(game.buyQty||1,e.mx-lvl)),cost=lvBulk(e,q),maxed=lvl>=e.mx;
+   card.innerHTML='<div class="upgrade-icon" style="background:'+e.col+'22">'+e.ic+'</div><div class="upgrade-info"><div class="upgrade-name">'+e.nm+'</div><div class="upgrade-desc">'+e.ds+'</div><div class="upgrade-level">Ур. '+lvl+'/'+e.mx+' · '+e.tx(lvl)+'</div></div><button class="buy-btn el-buy" data-c="'+cost+'" '+((maxed||game.balance<cost)?'disabled':'')+'>'+(maxed?'MAX':formatNum(cost)+' ₽'+(q>1?' ×'+q:''))+'</button>';
+   card.querySelector('button').onclick=()=>{if(maxed||game.balance<cost)return;game.balance-=cost;game.upgrades[e.id]=lvl+q;try{SFX.buy()}catch(x){}save();updateUI()};
+  }
+  list.appendChild(card)});
+}
+const _uu=updateUI;
+window.updateUI=function(full){const r=_uu.apply(this,arguments);
+ if(full===undefined||full===true)renderElite();
+ else document.querySelectorAll('.el-buy').forEach(b=>{b.disabled=game.balance<Number(b.dataset.c)&&!b.textContent.startsWith('MAX')||b.textContent==='MAX'});
+ return r};
+// ---------- presence + chat ----------
+const Chat={since:0,timer:null,seen:new Set(),
+ async open(){
+  if(!Acc.user||!Acc.tok){showToast('Для чата нужен аккаунт',false);openAuth();return}
+  if(!this.since){try{const r=await call({a:'ping'});this.since=(r&&r.now)||Date.now()}catch(e){this.since=Date.now()}}
+  $id('chatModal').classList.add('show');this.poll();clearInterval(this.timer);this.timer=setInterval(()=>this.poll(),3000);setTimeout(()=>$id('chatIn').focus(),200)},
+ close(){$id('chatModal').classList.remove('show');clearInterval(this.timer)},
+ hue(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return h},
+ add(m){const k=m.ts+m.n+m.t;if(this.seen.has(k))return;this.seen.add(k);
+  const box=$id('chatList'),d=document.createElement('div'),b=document.createElement('b'),t=document.createElement('span');
+  d.className='ch-msg'+(m.n===Acc.user?' me':'');b.textContent=m.n;b.style.color='hsl('+this.hue(m.n)+',85%,68%)';t.textContent=m.t;d.append(b,t);
+  const stick=box.scrollTop+box.clientHeight>=box.scrollHeight-40;box.appendChild(d);if(stick)box.scrollTop=box.scrollHeight},
+ async poll(){try{const r=await call({a:'chat_poll',since:this.since});if(r.err==='auth'||!r.msgs)return;r.msgs.forEach(m=>{this.add(m);if(m.ts>this.since)this.since=m.ts});if(!this.since)this.since=r.now}catch(e){}},
+ async send(){const i=$id('chatIn'),text=i.value.trim();if(!text)return;i.value='';
+  try{const r=await call({a:'chat_send',text});if(r.err){showToast(r.err,false);i.value=text;return}this.poll()}catch(e){showToast('Нет связи',false);i.value=text}}
+};
+window.Chat=Chat;
+const o=document.createElement('div');o.className='modal-overlay';o.id='chatModal';
+o.innerHTML='<div class="modal" style="max-width:440px"><div class="cf-head"><h2>💬 Чат игроков</h2><button class="cf-x" id="chatX">✕</button></div><div class="hint">Пишут все игроки в игре. История очищается при выходе и перезаходе.</div><div class="ch-list" id="chatList"></div><div class="ch-row"><input id="chatIn" maxlength="200" placeholder="Сообщение…" autocomplete="off"><button class="btn-case-open" id="chatSend" style="padding:0 16px">➤</button></div></div>';
+document.body.appendChild(o);$id('chatX').onclick=()=>Chat.close();$id('chatSend').onclick=()=>Chat.send();$id('chatIn').onkeydown=e=>{if(e.key==='Enter')Chat.send()};
+const ping=async off=>{if(!Acc.user||!Acc.tok)return;try{const r=await call({a:'ping',off:!!off});if(r&&r.now&&!Chat.since)Chat.since=r.now}catch(e){}};
+ping();setInterval(()=>{if(!document.hidden)ping()},25000);
+document.addEventListener('visibilitychange',async()=>{if(document.hidden){try{await Acc.push()}catch(e){}ping(true)}else ping()});
+window.addEventListener('pagehide',()=>{if(Acc.user&&Acc.tok)try{navigator.sendBeacon(API,new Blob([JSON.stringify({a:'ping',off:true,l:Acc.user,t:Acc.tok})],{type:'application/json'}))}catch(e){}});
+// ---------- logout wipes local progress; login restores it ----------
+Acc.pushStrict=async function(){if(!this.user||!this.tok)return false;try{const r=await call({a:'save',save:JSON.stringify(game),lb:{money:Math.floor(game.balance||0),clicks:Math.floor(game.totalClicks||0),cases:casesAll(),skins:game.ownedSkins.length,ach:Object.keys(game.claimedAch||{}).length,reb:game.rebirths||0}});return !!(r&&r.ok)}catch(e){return false}};
+const _lo=Acc.logout.bind(Acc);
+Acc.logout=function(soft){_lo();if(soft)return;window._blockSave=true;['clickerSave_v1','kochTapalka_v3'].forEach(k=>localStorage.removeItem(k));setTimeout(()=>location.reload(),60)};
+$id('authLogout').onclick=async()=>{
+ const b=$id('authLogout');b.disabled=true;const ok=await Acc.pushStrict();b.disabled=false;
+ const go=()=>{ping(true);Acc.logout();refreshAuthBtn();$id('authModal').classList.remove('show');showToast('Ты вышел из аккаунта',false)};
+ if(ok)go();else gameMsg('Не удалось сохранить прогресс на сервер. Если выйти сейчас, он пропадёт. Выйти всё равно?',go)};
 })();
 </script>
 </body>
