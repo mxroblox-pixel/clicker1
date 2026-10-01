@@ -375,11 +375,13 @@ html.light #craftFx canvas{filter:none}
   </div>
   <div class="tabs">
     <button class="tab active" data-tab="upgrades">Прокачка</button>
+    <button class="tab" data-tab="items" id="tabItems">Предметы</button>
+    <button class="tab" id="phoneTab" style="flex:0 0 52px;font-size:1.3rem;padding:6px 0">📱</button>
     <button class="tab" data-tab="achievements">Достижения</button>
     <button class="tab" data-tab="inventory">Инвентарь</button>
   </div>
   <div class="panel active" id="panel-upgrades">
-    <div class="tabs" style="margin-top:0;margin-bottom:10px">
+    <div class="tabs" style="display:none;margin-top:0;margin-bottom:10px">
       <button class="tab active" data-subtab="improvements" id="subtabImp">Улучшения</button>
       <button class="tab" data-subtab="items" id="subtabItems">Предметы</button>
     </div>
@@ -1474,7 +1476,7 @@ function updateUI(full=true){
     else if(done)btn=`<button class="claim-btn" data-ach="${a.id}">+${formatNum(a.reward)} ₽</button>`;
     else btn=`<span style="color:var(--muted);font-size:.72rem">🔒</span>`;
     let pg='';if(claimed||done)pg='<div style="color:#30d158;font-size:.7rem;font-weight:700">✔ Выполнено</div>';else if(a.prog){try{const q=a.prog(),cu=Math.min(q[0]||0,q[1]),pc=Math.max(0,Math.min(100,cu/q[1]*100));pg='<div style="font-size:.7rem;color:var(--accent2);font-weight:700">'+formatNum(cu)+' / '+formatNum(q[1])+' · осталось '+formatNum(Math.max(0,q[1]-cu))+'</div><div style="height:4px;border-radius:2px;background:#ffffff18;margin-top:3px"><i style="display:block;height:100%;width:'+pc+'%;background:var(--accent2);border-radius:2px"></i></div>'}catch(e){}}
-    const hid=a.rarity==='secret'&&!done&&!claimed;
+    const hid=false;
     card.innerHTML=`<div class="ach-icon">${done||claimed?a.icon:'🔒'}</div>
       <div class="ach-info"><div class="ach-name">${hid?'???':a.name}</div><div class="ach-desc">${hid?'Секретное достижение. Условие скрыто, виден только прогресс':'Как получить: '+a.desc}</div>${pg}</div>${btn}`;
     al.appendChild(card);
@@ -1483,10 +1485,12 @@ function updateUI(full=true){
     const group=achievements.filter(a=>(a.rarity||'common')===r);
     if(!group.length)return;
     const head=document.createElement('div');
-    head.style.cssText=`font-weight:800;font-size:0.78rem;margin:12px 0 6px;color:${ACH_CL[r]}`;
-    head.textContent=ACH_NM[r]+' · '+group.length;
+    game._openCons=game._openCons||{};const ok=!!game._openCons['a_'+r],rd=group.filter(a=>game.achievements[a.id]&&!game.claimedAch[a.id]).length,dn=group.filter(a=>game.claimedAch[a.id]).length;
+    head.style.cssText=`font-weight:800;font-size:0.82rem;margin:8px 0;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid ${ACH_CL[r]}66;color:${ACH_CL[r]};cursor:pointer;display:flex;justify-content:space-between;align-items:center`;
+    head.innerHTML='<span>'+ACH_NM[r]+' · '+dn+'/'+group.length+(rd?' <b style="background:#30d158;color:#000;border-radius:8px;padding:1px 7px;margin-left:6px">'+rd+' 🎁</b>':'')+'</span><span>'+(ok?'▲':'▼')+'</span>';
+    head.onclick=()=>{game._openCons['a_'+r]=!ok;save();updateUI()};
     al.appendChild(head);
-    group.forEach(renderAch);
+    if(ok)group.forEach(renderAch);
   });
   achievements.filter(a=>a.rarity&&!ACH_ORD.includes(a.rarity)).forEach(renderAch);
 
@@ -2124,15 +2128,15 @@ const Upgrader={
 };
 
 // ==================== POTION ACTIVATION ====================
-function activateBuff(id){
+function activateBuff(id,n){n=Math.max(1,Math.floor(n||1));
   const c=CONSUMABLES.find(x=>x.id===id);if(!c)return;
   if(!(game.inventory&&game.inventory[id]>0)){showToast('Нет в инвентаре!',false);return}
-  game.inventory[id]--;if(game.inventory[id]<=0)delete game.inventory[id];
-  const now=Date.now();game.fx=game.fx||{};const key=c.kind+'_'+id,cur=game.fx[key];
-  if(cur&&now<cur.until)cur.until+=c.dur*1000;
-  else game.fx[key]={id,name:c.name,icon:c.icon,kind:c.kind,val:c.val,label:c.short,start:now,until:now+c.dur*1000};
-  if(c.also){const k2=c.also.kind+'_'+id,c2=game.fx[k2];if(c2&&now<c2.until)c2.until+=c.dur*1000;else game.fx[k2]={id,name:c.name,icon:c.icon,kind:c.also.kind,val:c.also.val,label:c.also.short,start:now,until:now+c.dur*1000}}
-  showToast(c.icon+' '+c.name+' · '+c.short+' на '+mmss(c.dur*1000),false);
+  n=Math.min(n,game.inventory[id]);game.inventory[id]-=n;if(game.inventory[id]<=0)delete game.inventory[id];
+  const now=Date.now(),DUR=c.dur*n;game.fx=game.fx||{};const key=c.kind+'_'+id,cur=game.fx[key];
+  if(cur&&now<cur.until)cur.until+=DUR*1000;
+  else game.fx[key]={id,name:c.name,icon:c.icon,kind:c.kind,val:c.val,label:c.short,start:now,until:now+DUR*1000};
+  if(c.also){const k2=c.also.kind+'_'+id,c2=game.fx[k2];if(c2&&now<c2.until)c2.until+=DUR*1000;else game.fx[k2]={id,name:c.name,icon:c.icon,kind:c.also.kind,val:c.also.val,label:c.also.short,start:now,until:now+DUR*1000}}
+  showToast(c.icon+' '+c.name+' · '+c.short+' на '+mmss(DUR*1000)+(n>1?' (×'+n+')':''),false);
   sfx('buy');updateUI();renderBuffs();save();FX.tick();
 }
 
@@ -3990,6 +3994,74 @@ function post(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(post,0));else setTimeout(post,0);
 })();
 
+
+// ===== Предметы как отдельная вкладка =====
+(()=>{const p=document.createElement('div');p.className='panel';p.id='panel-items';const sp=$id('subpanel-items');
+ while(sp.firstChild)p.appendChild(sp.firstChild);$id('panel-achievements').before(p);
+ $id('tabItems').addEventListener('click',()=>{try{renderItems()}catch(e){}})})();
+// ===== ТЕЛЕФОН =====
+(()=>{
+ const css=document.createElement('style');css.textContent=`
+#phoneModal{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}
+#phoneModal.show{display:flex}
+.ph-body{position:relative;width:min(330px,88vw);height:min(660px,86vh);border-radius:48px;padding:10px;background:linear-gradient(145deg,#4a4a55,#15151b 40%,#34343e);box-shadow:0 0 0 2px #0a0a0e,0 30px 80px rgba(0,0,0,.7),inset 0 0 6px rgba(255,255,255,.25);animation:phIn .35s cubic-bezier(.2,1.3,.4,1)}
+@keyframes phIn{from{transform:translateY(60px) scale(.9);opacity:0}}
+.ph-scr{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:radial-gradient(circle at 20% 15%,#7c3aed 0,transparent 45%),radial-gradient(circle at 85% 30%,#06b6d4 0,transparent 40%),radial-gradient(circle at 40% 90%,#ec4899 0,transparent 50%),#0b0b1a;touch-action:none;user-select:none}
+.ph-notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:14px;background:#000;z-index:5}
+.ph-bar{position:absolute;top:12px;left:24px;right:22px;display:flex;justify-content:space-between;font-size:.74rem;font-weight:800;color:#fff;z-index:4;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.ph-ico{position:absolute;width:64px;text-align:center;cursor:grab;touch-action:none}
+.ph-ico .i{width:60px;height:60px;margin:0 auto;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;box-shadow:0 8px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.4);position:relative}
+.ph-ico span.n{display:block;margin:5px -14px 0;white-space:nowrap;font-size:.62rem;font-weight:700;color:#fff;text-shadow:0 1px 3px #000}
+.ph-ico.drag{z-index:8;transform:scale(1.14);cursor:grabbing;filter:drop-shadow(0 12px 14px rgba(0,0,0,.5))}
+.ph-bdg{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:10px;background:#ff3b30;color:#fff;font-size:.68rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #0b0b1a;box-sizing:border-box}
+.ph-home{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:118px;height:5px;border-radius:3px;background:rgba(255,255,255,.85);cursor:pointer;z-index:6}
+.ph-home::before{content:'';position:absolute;inset:-14px -10px}
+.ph-clock{position:absolute;top:64px;left:0;right:0;text-align:center;color:#fff;pointer-events:none}
+.ph-clock b{display:block;font-size:3.1rem;font-weight:300;letter-spacing:-1px;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.ph-clock small{font-size:.8rem;opacity:.85;font-weight:600}
+#phScr .modal-overlay{position:absolute;inset:0;z-index:3;padding:46px 8px 24px;border-radius:40px;background:rgba(10,10,22,.95);backdrop-filter:blur(14px);animation:none}
+#phScr .modal{max-height:100%!important;width:100%!important;max-width:none!important;margin:0 auto;padding:14px;border-radius:24px}
+.ph-ico{transition:left .22s cubic-bezier(.2,1.2,.4,1),top .22s cubic-bezier(.2,1.2,.4,1)}.ph-ico.drag{transition:none}
+.ph-hl{position:absolute;border:2px dashed rgba(255,255,255,.7);border-radius:18px;background:rgba(255,255,255,.12);display:none;pointer-events:none}
+body.light .ph-body{box-shadow:0 0 0 2px #888,0 30px 80px rgba(0,0,0,.4)}`;document.head.appendChild(css);
+ const APPS=[
+  {id:'lb',n:'Лидерборд',e:'🏆',c:'linear-gradient(135deg,#ffd60a,#ff9f0a)',f:()=>$id('lbBtn').click()},
+  {id:'set',n:'Настройки',e:'⚙️',c:'linear-gradient(135deg,#8e8e93,#48484a)',f:()=>$id('settingsBtn').click()},
+  {id:'reb',n:'Перерожд.',e:'♻️',c:'linear-gradient(135deg,#30d158,#0a84ff)',f:()=>Rebirth.open()},
+  {id:'chat',n:'Чат',e:'💬',c:'linear-gradient(135deg,#0a84ff,#5e5ce6)',f:()=>$id('chatBtn').click(),badge:1},
+  {id:'stat',n:'Статистика',e:'📊',c:'linear-gradient(135deg,#bf5af2,#ff375f)',f:()=>$id('statsBtn').click()}];
+ const KEY='phoneGrid_v2';let pos={};try{pos=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+ const m=document.createElement('div');m.id='phoneModal';
+ m.innerHTML='<div class="ph-body"><div class="ph-scr" id="phScr"><div class="ph-notch"></div><div class="ph-bar"><span id="phT">9:41</span><span>📶 LTE 🔋</span></div><div class="ph-clock"><b id="phC">9:41</b><small id="phD"></small></div><div class="ph-hl" id="phHl"></div><div class="ph-home" id="phHome"></div></div></div>';
+ document.body.appendChild(m);const scr=m.querySelector('#phScr'),hl=m.querySelector('#phHl');
+ const GR=()=>{const W=scr.clientWidth,H=scr.clientHeight,gt=150;return{W,H,gt,cw:W/4,ch:Math.max(70,(H-gt-30)/4)}};
+ const key=(c,r)=>c+','+r,occ=(skip)=>{const o=new Set();APPS.forEach(a=>{if(a!==skip&&pos[a.id])o.add(key(pos[a.id][0],pos[a.id][1]))});return o};
+ APPS.forEach(a=>{const p=pos[a.id];if(!Array.isArray(p)||p[0]<0||p[0]>3||p[1]<0||p[1]>3||occ(a).has(key(p[0],p[1]))){const o=occ(a);out:for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(!o.has(key(c,r))){pos[a.id]=[c,r];break out}}});
+ const sv=()=>{try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}};
+ const cellXY=(c,r)=>{const g=GR();return{x:c*g.cw+(g.cw-64)/2,y:g.gt+r*g.ch+Math.max(0,(g.ch-78)/2),g}};
+ const nearest=(cx,cy,a)=>{const g=GR(),o=occ(a);let best=null,bd=1e9;for(let r=0;r<4;r++)for(let c=0;c<4;c++){if(o.has(key(c,r)))continue;const d=Math.hypot(cx-(c+.5)*g.cw,cy-(g.gt+(r+.5)*g.ch));if(d<bd){bd=d;best=[c,r]}}return best};
+ APPS.forEach(a=>{const el=document.createElement('div');el.className='ph-ico';
+  el.innerHTML='<div class="i" style="background:'+a.c+'">'+a.e+(a.badge?'<div class="ph-bdg" id="phBdg"></div>':'')+'</div><span class="n">'+a.n+'</span>';scr.appendChild(el);
+  a._p=()=>{const q=cellXY(pos[a.id][0],pos[a.id][1]);el.style.left=q.x+'px';el.style.top=q.y+'px'};
+  let sx,sy,ox,oy,mv=0,dn=0;
+  el.addEventListener('pointerdown',e=>{dn=1;mv=0;sx=e.clientX;sy=e.clientY;ox=el.offsetLeft;oy=el.offsetTop;el.setPointerCapture(e.pointerId)});
+  el.addEventListener('pointermove',e=>{if(!dn)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!mv&&Math.hypot(dx,dy)>7){mv=1;el.classList.add('drag')}
+   if(mv){const g=GR(),nx=Math.max(0,Math.min(g.W-64,ox+dx)),ny=Math.max(g.gt-4,Math.min(g.H-100,oy+dy));el.style.left=nx+'px';el.style.top=ny+'px';
+    const t=nearest(nx+32,ny+32,a);if(t){const q=cellXY(t[0],t[1]);hl.style.cssText='display:block;left:'+(q.x-4)+'px;top:'+(q.y-4)+'px;width:72px;height:80px'}}});
+  el.addEventListener('pointerup',()=>{if(!dn)return;dn=0;el.classList.remove('drag');hl.style.display='none';
+   if(mv){const t=nearest(el.offsetLeft+32,el.offsetTop+32,a);if(t){pos[a.id]=t;sv()}a._p()}else a.f()});
+  el.addEventListener('pointercancel',()=>{dn=0;el.classList.remove('drag');hl.style.display='none';a._p()})});
+ const clock=()=>{const d=new Date(),t=d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});$id('phT').textContent=t;$id('phC').textContent=t;$id('phD').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  const b=$id('phBdg');if(b&&window.Chat){const u=Chat.unread||0;b.textContent=u>99?'99+':u;b.style.display=u?'flex':'none'}};
+ const ovs=()=>[...document.querySelectorAll('.modal-overlay')];
+ const mo=new MutationObserver(ms=>ms.forEach(r=>{const o=r.target;if(m.classList.contains('show')&&o.classList.contains('show')&&o.parentNode!==scr)scr.appendChild(o)}));
+ const shut=o=>{if(o.id==='chatModal'&&window.Chat)Chat.close();else o.classList.remove('show')};
+ const closePhone=()=>{[...scr.querySelectorAll('.modal-overlay')].forEach(o=>{shut(o);document.body.appendChild(o)});m.classList.remove('show')};
+ const home=()=>{const open=[...scr.querySelectorAll('.modal-overlay.show')];if(open.length)open.forEach(shut);else closePhone()};
+ const open=()=>{m.classList.add('show');clock();ovs().forEach(o=>mo.observe(o,{attributes:true,attributeFilter:['class']}));APPS.forEach(a=>a._p())};
+ $id('phoneTab').addEventListener('click',open);$id('phHome').onclick=home;m.addEventListener('pointerdown',e=>{if(e.target===m)closePhone()});
+ setInterval(()=>{if(m.classList.contains('show'))clock()},1000);
+})();
 </script>
 </body>
 </html>
