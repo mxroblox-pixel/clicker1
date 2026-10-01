@@ -3,7 +3,10 @@
 import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
 
-const VERSION = 4;
+const VERSION = 5;
+const FONTS = new Set(['f0','f1','f2','f3','f4','f5']);
+const clr = (c) => (/^#[0-9a-fA-F]{6}$/.test(String(c || '')) ? String(c) : '');
+const fnt = (f) => (FONTS.has(String(f)) ? String(f) : '');
 const ONLINE_MS = 70 * 1000;          // «в сети», если пинг был < 70 сек назад
 const DUEL_TTL = 10 * 60 * 1000;      // открытая дуэль живёт 10 минут
 const CHAT_TTL = 15 * 60 * 1000;      // сообщения чата живут 15 минут
@@ -83,6 +86,9 @@ async function doSave(s, me, b) {
     skins: num(lb.skins),
     ach: num(lb.ach),
     reb: num(lb.reb),
+    time: num(lb.time),
+    nc: clr(lb.nc),
+    nf: fnt(lb.nf),
   });
   return { ok: true };
 }
@@ -133,7 +139,8 @@ async function chatSend(s, me, b) {
   const now = Date.now();
   if (now - (lastSend.get(me) || 0) < 700) return { err: "Не так быстро" };
   lastSend.set(me, now);
-  await s.setJSON(chatKey(now), { ts: now, n: me, t });
+  const stl = (await s.get('l:' + me, { type: 'json' })) || {};
+  await s.setJSON(chatKey(now), { ts: now, n: me, t, nc: clr(stl.nc), nf: fnt(stl.nf) });
   // чистим старое
   try {
     const { blobs } = await s.list({ prefix: "c:" });
@@ -238,6 +245,30 @@ async function duelSettle(s, me, b) {
   return { ok: true, kind: "play" };
 }
 
+// ---------- змейка ----------
+const SNK = new Set(['7', '8', '9']);
+async function snkSubmit(s, me, b) {
+  const m = String(b.mode);
+  const ms = Math.floor(Number(b.ms));
+  if (!SNK.has(m) || !Number.isFinite(ms) || ms < 3000 || ms > 3600000) return { err: 'Неверные данные' };
+  const k = 'k:' + m + ':' + me;
+  const old = await s.get(k, { type: 'json' });
+  if (!old || ms < old.ms) await s.setJSON(k, { ms, ts: Date.now() });
+  return { ok: true, best: Math.min(ms, old ? old.ms : ms) };
+}
+async function snkLB(s, b) {
+  const m = String(b.mode);
+  if (!SNK.has(m)) return { rows: [] };
+  const { blobs } = await s.list({ prefix: 'k:' + m + ':' });
+  const rows = (await Promise.all(blobs.map(async (x) => {
+    const r = await s.get(x.key, { type: 'json' });
+    const login = x.key.split(':')[2];
+    const st = (await s.get('l:' + login, { type: 'json' })) || {};
+    return r ? { name: login, ms: r.ms, nc: st.nc || '', nf: st.nf || '' } : null;
+  }))).filter(Boolean).sort((a, c) => a.ms - c.ms).slice(0, 20);
+  return { rows };
+}
+
 // ---------- роутер ----------
 export default async (req) => {
   if (req.method !== "POST") return json({ err: "POST only" });
@@ -253,12 +284,14 @@ export default async (req) => {
     switch (b.a) {
       case "ver": return json({ v: VERSION });
       case "lb": return json(await doLB(s));
+      case "snk_lb": return json(await snkLB(s, b));
       case "auth": return json(await doAuth(s, b));
     }
     const me = await authed(s, b);
     if (!me) return json({ err: "auth" });
     switch (b.a) {
       case "save": return json(await doSave(s, me, b));
+      case "snk_submit": return json(await snkSubmit(s, me, b));
       case "ping": return json(await doPing(s, me, b));
       case "chat_poll": return json(await chatPoll(s, b));
       case "chat_send": return json(await chatSend(s, me, b));
