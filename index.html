@@ -833,112 +833,112 @@ upgrades.forEach(u=>{u.getText=function(l){
 
 // ==================== ACHIEVEMENTS (claimable) ====================
 const achievements = [
-  {id:'fc',name:'Первый баблос',desc:'1 клик',icon:'👆',check:()=>game.totalClicks>=1,reward:20,rarity:'common'},
-  {id:'c100',name:'Разгон',desc:'100 кликов',icon:'👊',check:()=>game.totalClicks>=100,reward:100,rarity:'common'},
-  {id:'c1k',name:'Машина',desc:'1 000 кликов',icon:'🤖',check:()=>game.totalClicks>=1000,reward:500,rarity:'common'},
-  {id:'c10k',name:'Киберпанк',desc:'10 000 кликов',icon:'🦾',check:()=>game.totalClicks>=10000,reward:3000,rarity:'rare'},
-  {id:'m1k',name:'Тысячник',desc:'1 000 ₽ всего',icon:'💰',check:()=>game.totalEarned>=1000,reward:150,rarity:'common'},
-  {id:'m10k',name:'Десятка',desc:'10 000 ₽ всего',icon:'🤑',check:()=>game.totalEarned>=10000,reward:500,rarity:'common'},
-  {id:'m100k',name:'Сотня тысяч',desc:'100 000 ₽',icon:'💎',check:()=>game.totalEarned>=100000,reward:3000,rarity:'rare'},
-  {id:'m1m',name:'Миллионер',desc:'1 000 000 ₽',icon:'👑',check:()=>game.totalEarned>=1000000,reward:20000,rarity:'epic'},
-  {id:'m10m',name:'Олигарх',desc:'10 000 000 ₽',icon:'🏦',check:()=>game.totalEarned>=10000000,reward:100000,rarity:'legendary'},
-  {id:'p10',name:'Сильный клик',desc:'Сила ≥ 10',icon:'💪',check:()=>getClickPower()>=10,reward:100,rarity:'common'},
-  {id:'p100',name:'Разрушитель',desc:'Сила ≥ 100',icon:'💥',check:()=>getClickPower()>=100,reward:1000,rarity:'rare'},
-  {id:'p1k',name:'Апокалипсис',desc:'Сила ≥ 1000',icon:'🌋',check:()=>getClickPower()>=1000,reward:10000,rarity:'epic'},
-  {id:'pas10',name:'Пассивчик',desc:'≥ 10 ₽/сек',icon:'📈',check:()=>getPassiveBase()>=10,reward:200,rarity:'common'},
-  {id:'pas100',name:'Река бабла',desc:'≥ 100 ₽/сек',icon:'🌊',check:()=>getPassiveBase()>=100,reward:2000,rarity:'rare'},
-  {id:'u5',name:'Качок',desc:'5 улучшений',icon:'🏋️',check:()=>totalUpg()>=5,reward:100,rarity:'common'},
-  {id:'u25',name:'Бодибилдер',desc:'25 улучшений',icon:'🏆',check:()=>totalUpg()>=25,reward:1000,rarity:'rare'},
-  {id:'u50',name:'Монстр',desc:'50 улучшений',icon:'👹',check:()=>totalUpg()>=50,reward:5000,rarity:'rare'},
-  {id:'skin1',name:'Коллекционер',desc:'Владей 3 скинами',icon:'🎨',check:()=>game.ownedSkins.length>=3,reward:500,rarity:'common'},
-  {id:'skin5',name:'Модник',desc:'Владей 8 скинами',icon:'😎',check:()=>game.ownedSkins.length>=8,reward:3000,rarity:'rare'},
+  {id:'fc',name:'Первый баблос',desc:'1 клик',icon:'👆',check:()=>game.totalClicks>=1,prog:()=>[game.totalClicks,1],reward:20,rarity:'common'},
+  {id:'c100',name:'Разгон',desc:'100 кликов',icon:'👊',check:()=>game.totalClicks>=100,prog:()=>[game.totalClicks,100],reward:100,rarity:'common'},
+  {id:'c1k',name:'Машина',desc:'1 000 кликов',icon:'🤖',check:()=>game.totalClicks>=1000,prog:()=>[game.totalClicks,1000],reward:500,rarity:'common'},
+  {id:'c10k',name:'Киберпанк',desc:'10 000 кликов',icon:'🦾',check:()=>game.totalClicks>=10000,prog:()=>[game.totalClicks,10000],reward:3000,rarity:'rare'},
+  {id:'m1k',name:'Тысячник',desc:'1 000 ₽ всего',icon:'💰',check:()=>game.totalEarned>=1000,prog:()=>[game.totalEarned,1000],reward:150,rarity:'common'},
+  {id:'m10k',name:'Десятка',desc:'10 000 ₽ всего',icon:'🤑',check:()=>game.totalEarned>=10000,prog:()=>[game.totalEarned,10000],reward:500,rarity:'common'},
+  {id:'m100k',name:'Сотня тысяч',desc:'100 000 ₽',icon:'💎',check:()=>game.totalEarned>=100000,prog:()=>[game.totalEarned,100000],reward:3000,rarity:'rare'},
+  {id:'m1m',name:'Миллионер',desc:'1 000 000 ₽',icon:'👑',check:()=>game.totalEarned>=1000000,prog:()=>[game.totalEarned,1000000],reward:20000,rarity:'epic'},
+  {id:'m10m',name:'Олигарх',desc:'10 000 000 ₽',icon:'🏦',check:()=>game.totalEarned>=10000000,prog:()=>[game.totalEarned,10000000],reward:100000,rarity:'legendary'},
+  {id:'p10',name:'Сильный клик',desc:'Сила ≥ 10',icon:'💪',check:()=>getClickPower()>=10,prog:()=>[getClickPower(),10],reward:100,rarity:'common'},
+  {id:'p100',name:'Разрушитель',desc:'Сила ≥ 100',icon:'💥',check:()=>getClickPower()>=100,prog:()=>[getClickPower(),100],reward:1000,rarity:'rare'},
+  {id:'p1k',name:'Апокалипсис',desc:'Сила ≥ 1000',icon:'🌋',check:()=>getClickPower()>=1000,prog:()=>[getClickPower(),1000],reward:10000,rarity:'epic'},
+  {id:'pas10',name:'Пассивчик',desc:'≥ 10 ₽/сек',icon:'📈',check:()=>getPassiveBase()>=10,prog:()=>[getPassiveBase(),10],reward:200,rarity:'common'},
+  {id:'pas100',name:'Река бабла',desc:'≥ 100 ₽/сек',icon:'🌊',check:()=>getPassiveBase()>=100,prog:()=>[getPassiveBase(),100],reward:2000,rarity:'rare'},
+  {id:'u5',name:'Качок',desc:'5 улучшений',icon:'🏋️',check:()=>totalUpg()>=5,prog:()=>[totalUpg(),5],reward:100,rarity:'common'},
+  {id:'u25',name:'Бодибилдер',desc:'25 улучшений',icon:'🏆',check:()=>totalUpg()>=25,prog:()=>[totalUpg(),25],reward:1000,rarity:'rare'},
+  {id:'u50',name:'Монстр',desc:'50 улучшений',icon:'👹',check:()=>totalUpg()>=50,prog:()=>[totalUpg(),50],reward:5000,rarity:'rare'},
+  {id:'skin1',name:'Коллекционер',desc:'Владей 3 скинами',icon:'🎨',check:()=>game.ownedSkins.length>=3,prog:()=>[game.ownedSkins.length,3],reward:500,rarity:'common'},
+  {id:'skin5',name:'Модник',desc:'Владей 8 скинами',icon:'😎',check:()=>game.ownedSkins.length>=8,prog:()=>[game.ownedSkins.length,8],reward:3000,rarity:'rare'},
   {id:'skinleg',name:'Легенда',desc:'Получи легендарный скин',icon:'🥇',check:()=>game.ownedSkins.some(id=>getSkin(id).rarity==='legendary'),reward:10000,rarity:'epic'},
   {id:'skinmyth',name:'Миф',desc:'Получи мифический скин',icon:'🔴',check:()=>game.ownedSkins.some(id=>getSkin(id).rarity==='mythic'),reward:30000,rarity:'epic'},
   {id:'skinsecret',name:'Секрет раскрыт',desc:'Получи секретный скин',icon:'🖤',check:()=>game.ownedSkins.includes('secret_1'),reward:100000,rarity:'legendary'},
-  {id:'case1',name:'Первый кейс',desc:'Открой 1 кейс',icon:'📦',check:()=>(game.casesOpened||0)>=1,reward:200,rarity:'common'},
-  {id:'case10',name:'Кейсоман',desc:'Открой 10 кейсов',icon:'🎁',check:()=>(game.casesOpened||0)>=10,reward:5000,rarity:'rare'},
-  {id:'bal50k',name:'Толстый',desc:'50 000 ₽ на балансе',icon:'👛',check:()=>game.balance>=50000,reward:2000,rarity:'rare'},
-  {id:'bal500k',name:'Коч Братааан',desc:'500 000 ₽ на балансе',icon:'😎',check:()=>game.balance>=500000,reward:15000,rarity:'epic'},
-  {id:'auto',name:'Ленивый бог',desc:'Купи автокликер',icon:'🤖',check:()=>(game.upgrades.auto1||0)+(game.upgrades.auto2||0)+(game.upgrades.auto3||0)>=1,reward:300,rarity:'common'},
-  {id:'critgod',name:'Бог критов',desc:'Крит 5 ур.',icon:'⚡',check:()=>(game.upgrades.cr||0)>=5,reward:1500,rarity:'rare'},
-  {id:'c50k',name:'Палец бога',desc:'50 000 кликов',icon:'👆',check:()=>game.totalClicks>=50000,reward:15000,rarity:'epic'},
-  {id:'m50m',name:'Империя',desc:'50 000 000 ₽ всего',icon:'🏛️',check:()=>game.totalEarned>=50000000,reward:200000,rarity:'mythic'},
-  {id:'p5k',name:'Разрушитель миров',desc:'Сила клика ≥ 5000',icon:'☄️',check:()=>getClickPower()>=5000,reward:50000,rarity:'legendary'},
-  {id:'pas1k',name:'Пассивный король',desc:'≥ 1000 ₽/сек',icon:'👑',check:()=>getPassiveBase()>=1000,reward:25000,rarity:'epic'},
-  {id:'u100',name:'Максимальная прокачка',desc:'100 улучшений',icon:'🚀',check:()=>totalUpg()>=100,reward:30000,rarity:'epic'},
-  {id:'skin15',name:'Гардероб',desc:'15 скинов',icon:'👔',check:()=>game.ownedSkins.length>=15,reward:10000,rarity:'epic'},
-  {id:'skin25',name:'Коллекция',desc:'25 скинов',icon:'🖼️',check:()=>game.ownedSkins.length>=25,reward:40000,rarity:'epic'},
-  {id:'case25',name:'Кейс-машина',desc:'25 кейсов',icon:'🎰',check:()=>((game.casesOpened||0)+(game.casesOpened2||0))>=25,reward:20000,rarity:'epic'},
-  {id:'case50',name:'Наркоман кейсов',desc:'50 кейсов',icon:'📦',check:()=>((game.casesOpened||0)+(game.casesOpened2||0))>=50,reward:75000,rarity:'legendary'},
-  {id:'prem1',name:'Премиум вкус',desc:'Открой премиум кейс',icon:'💎',check:()=>(game.casesOpened2||0)>=1,reward:5000,rarity:'rare'},
-  {id:'prem10',name:'Премиум барон',desc:'10 премиум кейсов',icon:'💍',check:()=>(game.casesOpened2||0)>=10,reward:100000,rarity:'legendary'},
+  {id:'case1',name:'Первый кейс',desc:'Открой 1 кейс',icon:'📦',check:()=>(game.casesOpened||0)>=1,prog:()=>[(game.casesOpened||0),1],reward:200,rarity:'common'},
+  {id:'case10',name:'Кейсоман',desc:'Открой 10 кейсов',icon:'🎁',check:()=>(game.casesOpened||0)>=10,prog:()=>[(game.casesOpened||0),10],reward:5000,rarity:'rare'},
+  {id:'bal50k',name:'Толстый',desc:'50 000 ₽ на балансе',icon:'👛',check:()=>game.balance>=50000,prog:()=>[game.balance,50000],reward:2000,rarity:'rare'},
+  {id:'bal500k',name:'Коч Братааан',desc:'500 000 ₽ на балансе',icon:'😎',check:()=>game.balance>=500000,prog:()=>[game.balance,500000],reward:15000,rarity:'epic'},
+  {id:'auto',name:'Ленивый бог',desc:'Купи автокликер',icon:'🤖',check:()=>(game.upgrades.auto1||0)+(game.upgrades.auto2||0)+(game.upgrades.auto3||0)>=1,prog:()=>[(game.upgrades.auto1||0)+(game.upgrades.auto2||0)+(game.upgrades.auto3||0),1],reward:300,rarity:'common'},
+  {id:'critgod',name:'Бог критов',desc:'Крит 5 ур.',icon:'⚡',check:()=>(game.upgrades.cr||0)>=5,prog:()=>[(game.upgrades.cr||0),5],reward:1500,rarity:'rare'},
+  {id:'c50k',name:'Палец бога',desc:'50 000 кликов',icon:'👆',check:()=>game.totalClicks>=50000,prog:()=>[game.totalClicks,50000],reward:15000,rarity:'epic'},
+  {id:'m50m',name:'Империя',desc:'50 000 000 ₽ всего',icon:'🏛️',check:()=>game.totalEarned>=50000000,prog:()=>[game.totalEarned,50000000],reward:200000,rarity:'mythic'},
+  {id:'p5k',name:'Разрушитель миров',desc:'Сила клика ≥ 5000',icon:'☄️',check:()=>getClickPower()>=5000,prog:()=>[getClickPower(),5000],reward:50000,rarity:'legendary'},
+  {id:'pas1k',name:'Пассивный король',desc:'≥ 1000 ₽/сек',icon:'👑',check:()=>getPassiveBase()>=1000,prog:()=>[getPassiveBase(),1000],reward:25000,rarity:'epic'},
+  {id:'u100',name:'Максимальная прокачка',desc:'100 улучшений',icon:'🚀',check:()=>totalUpg()>=100,prog:()=>[totalUpg(),100],reward:30000,rarity:'epic'},
+  {id:'skin15',name:'Гардероб',desc:'15 скинов',icon:'👔',check:()=>game.ownedSkins.length>=15,prog:()=>[game.ownedSkins.length,15],reward:10000,rarity:'epic'},
+  {id:'skin25',name:'Коллекция',desc:'25 скинов',icon:'🖼️',check:()=>game.ownedSkins.length>=25,prog:()=>[game.ownedSkins.length,25],reward:40000,rarity:'epic'},
+  {id:'case25',name:'Кейс-машина',desc:'25 кейсов',icon:'🎰',check:()=>((game.casesOpened||0)+(game.casesOpened2||0))>=25,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)),25],reward:20000,rarity:'epic'},
+  {id:'case50',name:'Наркоман кейсов',desc:'50 кейсов',icon:'📦',check:()=>((game.casesOpened||0)+(game.casesOpened2||0))>=50,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)),50],reward:75000,rarity:'legendary'},
+  {id:'prem1',name:'Премиум вкус',desc:'Открой премиум кейс',icon:'💎',check:()=>(game.casesOpened2||0)>=1,prog:()=>[(game.casesOpened2||0),1],reward:5000,rarity:'rare'},
+  {id:'prem10',name:'Премиум барон',desc:'10 премиум кейсов',icon:'💍',check:()=>(game.casesOpened2||0)>=10,prog:()=>[(game.casesOpened2||0),10],reward:100000,rarity:'legendary'},
   {id:'unreal',name:'Это нереально',desc:'Выбей Нереальный скин',icon:'💚',check:()=>game.ownedSkins.includes('p_unreal_1'),reward:500000,rarity:'mythic'},
   {id:'impossible',name:'Возможное невозможное',desc:'Выбей Невозможный скин',icon:'🖤',check:()=>game.ownedSkins.includes('p_imp_1'),reward:200000,rarity:'mythic'},
-  {id:'bal1m',name:'Миллион в кармане',desc:'1 000 000 ₽ на балансе',icon:'💰',check:()=>game.balance>=1000000,reward:50000,rarity:'legendary'},
-  {id:'bal10m',name:'Десять лямов',desc:'10 000 000 ₽ на балансе',icon:'🤑',check:()=>game.balance>=10000000,reward:250000,rarity:'mythic'},
-  {id:'auto10',name:'Полный автомат',desc:'Автоклик ≥ 10/сек',icon:'🤖',check:()=>getAutoRate()>=10,reward:8000,rarity:'rare'},
-  {id:'auto50',name:'Ферма',desc:'Автоклик ≥ 50/сек',icon:'🏭',check:()=>getAutoRate()>=50,reward:40000,rarity:'epic'},
-  {id:'mult5',name:'Множитель x5',desc:'Общий множитель ≥ 5',icon:'✨',check:()=>getMultiplier()>=5,reward:15000,rarity:'epic'},
+  {id:'bal1m',name:'Миллион в кармане',desc:'1 000 000 ₽ на балансе',icon:'💰',check:()=>game.balance>=1000000,prog:()=>[game.balance,1000000],reward:50000,rarity:'legendary'},
+  {id:'bal10m',name:'Десять лямов',desc:'10 000 000 ₽ на балансе',icon:'🤑',check:()=>game.balance>=10000000,prog:()=>[game.balance,10000000],reward:250000,rarity:'mythic'},
+  {id:'auto10',name:'Полный автомат',desc:'Автоклик ≥ 10/сек',icon:'🤖',check:()=>getAutoRate()>=10,prog:()=>[getAutoRate(),10],reward:8000,rarity:'rare'},
+  {id:'auto50',name:'Ферма',desc:'Автоклик ≥ 50/сек',icon:'🏭',check:()=>getAutoRate()>=50,prog:()=>[getAutoRate(),50],reward:40000,rarity:'epic'},
+  {id:'mult5',name:'Множитель x5',desc:'Общий множитель ≥ 5',icon:'✨',check:()=>getMultiplier()>=5,prog:()=>[getMultiplier(),5],reward:15000,rarity:'epic'},
   {id:'allcommon',name:'Серый набор',desc:'Все обычные скины',icon:'⚪',check:()=>SKINS.filter(s=>s.rarity==='common').every(s=>game.ownedSkins.includes(s.id)),reward:5000,rarity:'rare'},
   // === EXTRA TO 100 ===
-  {id:'c500',name:'Полтысячи',desc:'500 кликов',icon:'👆',check:()=>game.totalClicks>=500,reward:250,rarity:'common'},
-  {id:'c5k',name:'Пять тысяч',desc:'5 000 кликов',icon:'🖐️',check:()=>game.totalClicks>=5000,reward:1500,rarity:'common'},
-  {id:'c25k',name:'Двадцать пять',desc:'25 000 кликов',icon:'✋',check:()=>game.totalClicks>=25000,reward:8000,rarity:'rare'},
-  {id:'c100k',name:'Сто тысяч тапов',desc:'100 000 кликов',icon:'💯',check:()=>game.totalClicks>=100000,reward:50000,rarity:'epic'},
-  {id:'m5k',name:'Пять штук',desc:'5 000 ₽ всего',icon:'💵',check:()=>game.totalEarned>=5000,reward:300,rarity:'common'},
-  {id:'m50k',name:'Полтинник',desc:'50 000 ₽ всего',icon:'💸',check:()=>game.totalEarned>=50000,reward:1500,rarity:'common'},
-  {id:'m500k',name:'Полмиллиона',desc:'500 000 ₽ всего',icon:'💰',check:()=>game.totalEarned>=500000,reward:8000,rarity:'rare'},
-  {id:'m5m',name:'Пять лямов',desc:'5 000 000 ₽ всего',icon:'🏆',check:()=>game.totalEarned>=5000000,reward:40000,rarity:'epic'},
-  {id:'m100m',name:'Сотня лямов',desc:'100 000 000 ₽ всего',icon:'👑',check:()=>game.totalEarned>=1e8,reward:200000,rarity:'legendary'},
-  {id:'m1b',name:'Миллиардер',desc:'1 000 000 000 ₽ всего',icon:'💎',check:()=>game.totalEarned>=1e9,reward:1000000,rarity:'mythic'},
-  {id:'p50',name:'Сила 50',desc:'Сила клика ≥ 50',icon:'💪',check:()=>getClickPower()>=50,reward:500,rarity:'common'},
-  {id:'p500',name:'Сила 500',desc:'Сила клика ≥ 500',icon:'🔥',check:()=>getClickPower()>=500,reward:5000,rarity:'rare'},
-  {id:'p10k',name:'Сила 10K',desc:'Сила клика ≥ 10 000',icon:'⚡',check:()=>getClickPower()>=10000,reward:100000,rarity:'legendary'},
-  {id:'pas50',name:'Пассив 50',desc:'≥ 50 ₽/сек',icon:'📈',check:()=>getPassiveBase()>=50,reward:1000,rarity:'common'},
-  {id:'pas500',name:'Пассив 500',desc:'≥ 500 ₽/сек',icon:'🌊',check:()=>getPassiveBase()>=500,reward:10000,rarity:'rare'},
-  {id:'pas5k',name:'Пассив 5K',desc:'≥ 5 000 ₽/сек',icon:'🚀',check:()=>getPassiveBase()>=5000,reward:75000,rarity:'epic'},
-  {id:'u10',name:'Десятка апгрейдов',desc:'10 улучшений',icon:'🛠️',check:()=>totalUpg()>=10,reward:300,rarity:'common'},
-  {id:'u75',name:'Семьдесят пять',desc:'75 улучшений',icon:'⚙️',check:()=>totalUpg()>=75,reward:15000,rarity:'rare'},
-  {id:'u150',name:'Сотня пятьдесят',desc:'150 улучшений',icon:'🔧',check:()=>totalUpg()>=150,reward:80000,rarity:'epic'},
-  {id:'u300',name:'Максималист',desc:'300 улучшений',icon:'🏭',check:()=>totalUpg()>=300,reward:300000,rarity:'legendary'},
-  {id:'skin3',name:'Тройка скинов',desc:'3 скина',icon:'🎨',check:()=>game.ownedSkins.length>=3,reward:400,rarity:'common'},
-  {id:'skin10',name:'Десятка скинов',desc:'10 скинов',icon:'🖼️',check:()=>game.ownedSkins.length>=10,reward:5000,rarity:'rare'},
-  {id:'skin20',name:'Двадцатка',desc:'20 скинов',icon:'🎭',check:()=>game.ownedSkins.length>=20,reward:25000,rarity:'epic'},
-  {id:'skin30',name:'Тридцатка',desc:'30 скинов',icon:'👑',check:()=>game.ownedSkins.length>=30,reward:100000,rarity:'legendary'},
-  {id:'case5',name:'Пять кейсов',desc:'5 кейсов',icon:'📦',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=5,reward:1000,rarity:'common'},
-  {id:'case15',name:'Пятнадцать кейсов',desc:'15 кейсов',icon:'🎁',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=15,reward:8000,rarity:'rare'},
-  {id:'case40',name:'Сорок кейсов',desc:'40 кейсов',icon:'🎰',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=40,reward:40000,rarity:'epic'},
-  {id:'case100',name:'Сотня кейсов',desc:'100 кейсов',icon:'🏆',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=100,reward:200000,rarity:'legendary'},
-  {id:'prem5',name:'Премиум 5',desc:'5 премиум кейсов',icon:'💎',check:()=>(game.casesOpened2||0)>=5,reward:30000,rarity:'epic'},
-  {id:'elite1',name:'Элита',desc:'Открой элитный кейс',icon:'👑',check:()=>(game.casesOpened3||0)>=1,reward:50000,rarity:'legendary'},
-  {id:'elite5',name:'Элита 5',desc:'5 элитных кейсов',icon:'💫',check:()=>(game.casesOpened3||0)>=5,reward:250000,rarity:'mythic'},
-  {id:'bal100k',name:'Сто на балансе',desc:'100 000 ₽ баланс',icon:'👛',check:()=>game.balance>=100000,reward:5000,rarity:'rare'},
-  {id:'bal5m',name:'Пять лямов баланс',desc:'5 000 000 ₽ баланс',icon:'🤑',check:()=>game.balance>=5000000,reward:100000,rarity:'epic'},
-  {id:'bal100m',name:'Сотня лямов баланс',desc:'100 000 000 ₽ баланс',icon:'🏦',check:()=>game.balance>=1e8,reward:500000,rarity:'legendary'},
-  {id:'bal1t',name:'Триллионер',desc:'1 000 000 000 000 ₽ баланс',icon:'🌌',check:()=>game.balance>=1e12,reward:5000000,rarity:'mythic'},
-  {id:'auto1',name:'Первый авто',desc:'Автоклик ≥ 1/сек',icon:'🤖',check:()=>getAutoRate()>=1,reward:2000,rarity:'common'},
-  {id:'auto5',name:'Авто 5',desc:'Автоклик ≥ 5/сек',icon:'⚙️',check:()=>getAutoRate()>=5,reward:10000,rarity:'rare'},
-  {id:'auto25',name:'Авто 25',desc:'Автоклик ≥ 25/сек',icon:'🖥️',check:()=>getAutoRate()>=25,reward:50000,rarity:'epic'},
-  {id:'auto100',name:'Авто 100',desc:'Автоклик ≥ 100/сек',icon:'🛸',check:()=>getAutoRate()>=100,reward:300000,rarity:'legendary'},
-  {id:'mult2',name:'Двойной',desc:'Множитель ≥ 2',icon:'✖️',check:()=>getMultiplier()>=2,reward:3000,rarity:'common'},
-  {id:'mult10',name:'Десятикратный',desc:'Множитель ≥ 10',icon:'✨',check:()=>getMultiplier()>=10,reward:50000,rarity:'epic'},
-  {id:'mult25',name:'×25',desc:'Множитель ≥ 25',icon:'🌟',check:()=>getMultiplier()>=25,reward:200000,rarity:'legendary'},
-  {id:'crit20',name:'Крит 20%',desc:'Крит ≥ 20%',icon:'⚡',check:()=>getCritChance()>=20,reward:5000,rarity:'rare'},
-  {id:'crit50',name:'Крит 50%',desc:'Крит ≥ 50%',icon:'🌩️',check:()=>getCritChance()>=50,reward:30000,rarity:'epic'},
+  {id:'c500',name:'Полтысячи',desc:'500 кликов',icon:'👆',check:()=>game.totalClicks>=500,prog:()=>[game.totalClicks,500],reward:250,rarity:'common'},
+  {id:'c5k',name:'Пять тысяч',desc:'5 000 кликов',icon:'🖐️',check:()=>game.totalClicks>=5000,prog:()=>[game.totalClicks,5000],reward:1500,rarity:'common'},
+  {id:'c25k',name:'Двадцать пять',desc:'25 000 кликов',icon:'✋',check:()=>game.totalClicks>=25000,prog:()=>[game.totalClicks,25000],reward:8000,rarity:'rare'},
+  {id:'c100k',name:'Сто тысяч тапов',desc:'100 000 кликов',icon:'💯',check:()=>game.totalClicks>=100000,prog:()=>[game.totalClicks,100000],reward:50000,rarity:'epic'},
+  {id:'m5k',name:'Пять штук',desc:'5 000 ₽ всего',icon:'💵',check:()=>game.totalEarned>=5000,prog:()=>[game.totalEarned,5000],reward:300,rarity:'common'},
+  {id:'m50k',name:'Полтинник',desc:'50 000 ₽ всего',icon:'💸',check:()=>game.totalEarned>=50000,prog:()=>[game.totalEarned,50000],reward:1500,rarity:'common'},
+  {id:'m500k',name:'Полмиллиона',desc:'500 000 ₽ всего',icon:'💰',check:()=>game.totalEarned>=500000,prog:()=>[game.totalEarned,500000],reward:8000,rarity:'rare'},
+  {id:'m5m',name:'Пять лямов',desc:'5 000 000 ₽ всего',icon:'🏆',check:()=>game.totalEarned>=5000000,prog:()=>[game.totalEarned,5000000],reward:40000,rarity:'epic'},
+  {id:'m100m',name:'Сотня лямов',desc:'100 000 000 ₽ всего',icon:'👑',check:()=>game.totalEarned>=1e8,prog:()=>[game.totalEarned,1e8],reward:200000,rarity:'legendary'},
+  {id:'m1b',name:'Миллиардер',desc:'1 000 000 000 ₽ всего',icon:'💎',check:()=>game.totalEarned>=1e9,prog:()=>[game.totalEarned,1e9],reward:1000000,rarity:'mythic'},
+  {id:'p50',name:'Сила 50',desc:'Сила клика ≥ 50',icon:'💪',check:()=>getClickPower()>=50,prog:()=>[getClickPower(),50],reward:500,rarity:'common'},
+  {id:'p500',name:'Сила 500',desc:'Сила клика ≥ 500',icon:'🔥',check:()=>getClickPower()>=500,prog:()=>[getClickPower(),500],reward:5000,rarity:'rare'},
+  {id:'p10k',name:'Сила 10K',desc:'Сила клика ≥ 10 000',icon:'⚡',check:()=>getClickPower()>=10000,prog:()=>[getClickPower(),10000],reward:100000,rarity:'legendary'},
+  {id:'pas50',name:'Пассив 50',desc:'≥ 50 ₽/сек',icon:'📈',check:()=>getPassiveBase()>=50,prog:()=>[getPassiveBase(),50],reward:1000,rarity:'common'},
+  {id:'pas500',name:'Пассив 500',desc:'≥ 500 ₽/сек',icon:'🌊',check:()=>getPassiveBase()>=500,prog:()=>[getPassiveBase(),500],reward:10000,rarity:'rare'},
+  {id:'pas5k',name:'Пассив 5K',desc:'≥ 5 000 ₽/сек',icon:'🚀',check:()=>getPassiveBase()>=5000,prog:()=>[getPassiveBase(),5000],reward:75000,rarity:'epic'},
+  {id:'u10',name:'Десятка апгрейдов',desc:'10 улучшений',icon:'🛠️',check:()=>totalUpg()>=10,prog:()=>[totalUpg(),10],reward:300,rarity:'common'},
+  {id:'u75',name:'Семьдесят пять',desc:'75 улучшений',icon:'⚙️',check:()=>totalUpg()>=75,prog:()=>[totalUpg(),75],reward:15000,rarity:'rare'},
+  {id:'u150',name:'Сотня пятьдесят',desc:'150 улучшений',icon:'🔧',check:()=>totalUpg()>=150,prog:()=>[totalUpg(),150],reward:80000,rarity:'epic'},
+  {id:'u300',name:'Максималист',desc:'300 улучшений',icon:'🏭',check:()=>totalUpg()>=300,prog:()=>[totalUpg(),300],reward:300000,rarity:'legendary'},
+  {id:'skin3',name:'Тройка скинов',desc:'3 скина',icon:'🎨',check:()=>game.ownedSkins.length>=3,prog:()=>[game.ownedSkins.length,3],reward:400,rarity:'common'},
+  {id:'skin10',name:'Десятка скинов',desc:'10 скинов',icon:'🖼️',check:()=>game.ownedSkins.length>=10,prog:()=>[game.ownedSkins.length,10],reward:5000,rarity:'rare'},
+  {id:'skin20',name:'Двадцатка',desc:'20 скинов',icon:'🎭',check:()=>game.ownedSkins.length>=20,prog:()=>[game.ownedSkins.length,20],reward:25000,rarity:'epic'},
+  {id:'skin30',name:'Тридцатка',desc:'30 скинов',icon:'👑',check:()=>game.ownedSkins.length>=30,prog:()=>[game.ownedSkins.length,30],reward:100000,rarity:'legendary'},
+  {id:'case5',name:'Пять кейсов',desc:'5 кейсов',icon:'📦',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=5,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0)),5],reward:1000,rarity:'common'},
+  {id:'case15',name:'Пятнадцать кейсов',desc:'15 кейсов',icon:'🎁',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=15,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0)),15],reward:8000,rarity:'rare'},
+  {id:'case40',name:'Сорок кейсов',desc:'40 кейсов',icon:'🎰',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=40,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0)),40],reward:40000,rarity:'epic'},
+  {id:'case100',name:'Сотня кейсов',desc:'100 кейсов',icon:'🏆',check:()=>((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0))>=100,prog:()=>[((game.casesOpened||0)+(game.casesOpened2||0)+(game.casesOpened3||0)),100],reward:200000,rarity:'legendary'},
+  {id:'prem5',name:'Премиум 5',desc:'5 премиум кейсов',icon:'💎',check:()=>(game.casesOpened2||0)>=5,prog:()=>[(game.casesOpened2||0),5],reward:30000,rarity:'epic'},
+  {id:'elite1',name:'Элита',desc:'Открой элитный кейс',icon:'👑',check:()=>(game.casesOpened3||0)>=1,prog:()=>[(game.casesOpened3||0),1],reward:50000,rarity:'legendary'},
+  {id:'elite5',name:'Элита 5',desc:'5 элитных кейсов',icon:'💫',check:()=>(game.casesOpened3||0)>=5,prog:()=>[(game.casesOpened3||0),5],reward:250000,rarity:'mythic'},
+  {id:'bal100k',name:'Сто на балансе',desc:'100 000 ₽ баланс',icon:'👛',check:()=>game.balance>=100000,prog:()=>[game.balance,100000],reward:5000,rarity:'rare'},
+  {id:'bal5m',name:'Пять лямов баланс',desc:'5 000 000 ₽ баланс',icon:'🤑',check:()=>game.balance>=5000000,prog:()=>[game.balance,5000000],reward:100000,rarity:'epic'},
+  {id:'bal100m',name:'Сотня лямов баланс',desc:'100 000 000 ₽ баланс',icon:'🏦',check:()=>game.balance>=1e8,prog:()=>[game.balance,1e8],reward:500000,rarity:'legendary'},
+  {id:'bal1t',name:'Триллионер',desc:'1 000 000 000 000 ₽ баланс',icon:'🌌',check:()=>game.balance>=1e12,prog:()=>[game.balance,1e12],reward:5000000,rarity:'mythic'},
+  {id:'auto1',name:'Первый авто',desc:'Автоклик ≥ 1/сек',icon:'🤖',check:()=>getAutoRate()>=1,prog:()=>[getAutoRate(),1],reward:2000,rarity:'common'},
+  {id:'auto5',name:'Авто 5',desc:'Автоклик ≥ 5/сек',icon:'⚙️',check:()=>getAutoRate()>=5,prog:()=>[getAutoRate(),5],reward:10000,rarity:'rare'},
+  {id:'auto25',name:'Авто 25',desc:'Автоклик ≥ 25/сек',icon:'🖥️',check:()=>getAutoRate()>=25,prog:()=>[getAutoRate(),25],reward:50000,rarity:'epic'},
+  {id:'auto100',name:'Авто 100',desc:'Автоклик ≥ 100/сек',icon:'🛸',check:()=>getAutoRate()>=100,prog:()=>[getAutoRate(),100],reward:300000,rarity:'legendary'},
+  {id:'mult2',name:'Двойной',desc:'Множитель ≥ 2',icon:'✖️',check:()=>getMultiplier()>=2,prog:()=>[getMultiplier(),2],reward:3000,rarity:'common'},
+  {id:'mult10',name:'Десятикратный',desc:'Множитель ≥ 10',icon:'✨',check:()=>getMultiplier()>=10,prog:()=>[getMultiplier(),10],reward:50000,rarity:'epic'},
+  {id:'mult25',name:'×25',desc:'Множитель ≥ 25',icon:'🌟',check:()=>getMultiplier()>=25,prog:()=>[getMultiplier(),25],reward:200000,rarity:'legendary'},
+  {id:'crit20',name:'Крит 20%',desc:'Крит ≥ 20%',icon:'⚡',check:()=>getCritChance()>=20,prog:()=>[getCritChance(),20],reward:5000,rarity:'rare'},
+  {id:'crit50',name:'Крит 50%',desc:'Крит ≥ 50%',icon:'🌩️',check:()=>getCritChance()>=50,prog:()=>[getCritChance(),50],reward:30000,rarity:'epic'},
   {id:'allrare',name:'Синий набор',desc:'Все редкие скины',icon:'🔵',check:()=>SKINS.filter(s=>s.rarity==='rare').every(s=>game.ownedSkins.includes(s.id)),reward:15000,rarity:'rare'},
   {id:'allepic',name:'Фиолетовый набор',desc:'Все эпики',icon:'🟣',check:()=>SKINS.filter(s=>s.rarity==='epic').every(s=>game.ownedSkins.includes(s.id)),reward:50000,rarity:'epic'},
   {id:'allleg',name:'Золотой набор',desc:'Все легендарки',icon:'🟡',check:()=>SKINS.filter(s=>s.rarity==='legendary').every(s=>game.ownedSkins.includes(s.id)),reward:150000,rarity:'legendary'},
-  {id:'day1',name:'Первый день',desc:'Заработай 100 ₽',icon:'🌅',check:()=>game.totalEarned>=100,reward:50,rarity:'common'},
-  {id:'rich',name:'Богач',desc:'1Qa всего',icon:'🤑',check:()=>game.totalEarned>=1e15,reward:10000000,rarity:'mythic'},
+  {id:'day1',name:'Первый день',desc:'Заработай 100 ₽',icon:'🌅',check:()=>game.totalEarned>=100,prog:()=>[game.totalEarned,100],reward:50,rarity:'common'},
+  {id:'rich',name:'Богач',desc:'1Qa всего',icon:'🤑',check:()=>game.totalEarned>=1e15,prog:()=>[game.totalEarned,1e15],reward:10000000,rarity:'mythic'},
   {id:'omega',name:'Омега найден',desc:'Выбей ОМЕГА скин',icon:'👑',check:()=>game.ownedSkins.includes('e_omega_1'),reward:1000000,rarity:'mythic'},
   {id:'void',name:'Пустота',desc:'Выбей Пустоту',icon:'🌑',check:()=>game.ownedSkins.includes('e_void_1'),reward:200000,rarity:'legendary'},
   {id:'chrome',name:'Хром',desc:'Выбей Хром',icon:'🪞',check:()=>game.ownedSkins.includes('e_chrome_1'),reward:300000,rarity:'legendary'},
   {id:'upgmax',name:'Всё на максимум',desc:'50 MAX улучшений',icon:'✅',check:()=>upgrades.filter(u=>u.max&&(game.upgrades[u.id]||0)>=u.max).length>=50,reward:500000,rarity:'mythic'},
-  {id:'claim10',name:'Десять достижений',desc:'Забери 10 достижений',icon:'🏅',check:()=>Object.keys(game.claimedAch||{}).length>=10,reward:2000,rarity:'common'},
-  {id:'claim30',name:'Тридцать достижений',desc:'Забери 30 достижений',icon:'🎖️',check:()=>Object.keys(game.claimedAch||{}).length>=30,reward:25000,rarity:'rare'},
-  {id:'claim50',name:'Полтинник достижений',desc:'Забери 50 достижений',icon:'🥇',check:()=>Object.keys(game.claimedAch||{}).length>=50,reward:100000,rarity:'epic'},
-  {id:'claim80',name:'Восемьдесят',desc:'Забери 80 достижений',icon:'🏆',check:()=>Object.keys(game.claimedAch||{}).length>=80,reward:500000,rarity:'legendary'},
-  {id:'claim100',name:'Сотня достижений',desc:'Забери все 100',icon:'💯',check:()=>Object.keys(game.claimedAch||{}).length>=100,reward:5000000,rarity:'mythic'},
+  {id:'claim10',name:'Десять достижений',desc:'Забери 10 достижений',icon:'🏅',check:()=>Object.keys(game.claimedAch||{}).length>=10,prog:()=>[Object.keys(game.claimedAch||{}).length,10],reward:2000,rarity:'common'},
+  {id:'claim30',name:'Тридцать достижений',desc:'Забери 30 достижений',icon:'🎖️',check:()=>Object.keys(game.claimedAch||{}).length>=30,prog:()=>[Object.keys(game.claimedAch||{}).length,30],reward:25000,rarity:'rare'},
+  {id:'claim50',name:'Полтинник достижений',desc:'Забери 50 достижений',icon:'🥇',check:()=>Object.keys(game.claimedAch||{}).length>=50,prog:()=>[Object.keys(game.claimedAch||{}).length,50],reward:100000,rarity:'epic'},
+  {id:'claim80',name:'Восемьдесят',desc:'Забери 80 достижений',icon:'🏆',check:()=>Object.keys(game.claimedAch||{}).length>=80,prog:()=>[Object.keys(game.claimedAch||{}).length,80],reward:500000,rarity:'legendary'},
+  {id:'claim100',name:'Сотня достижений',desc:'Забери все 100',icon:'💯',check:()=>Object.keys(game.claimedAch||{}).length>=100,prog:()=>[Object.keys(game.claimedAch||{}).length,100],reward:5000000,rarity:'mythic'},
 ];
 
 // ==================== HELPERS ====================
@@ -1082,7 +1082,7 @@ function gameMsg(text,onOk){
   b.appendChild(row);o.appendChild(b);document.body.appendChild(o);
 }
 function finishGame(){
-  const a=Object.keys(game.claimedAch||{}).length,t=achievements.length,r=game.rebirths||0,need=1e15;
+  const a=Object.keys(game.claimedAch||{}).length,t=achievements.filter(a=>a.rarity!=='impossible'&&a.rarity!=='secret').length,r=game.rebirths||0,need=1e15;
   if(game.gameBeaten){showToast('🏆 Игра уже пройдена!',false);return}
   if(a<t||r<REB_MAX||game.balance<need){gameMsg(`Чтобы пройти игру:\n${a>=t?'✅':'❌'} Все достижения: ${a}/${t}\n${r>=REB_MAX?'✅':'❌'} Все перерождения: ${r}/${REB_MAX}\n${game.balance>=need?'✅':'❌'} Баланс: ${formatNum(game.balance)} / ${formatNum(need)} ₽`);return}
   game.gameBeaten=true;game.balance-=need;save();updateUI();gameMsg('🏆 ИГРА ПРОЙДЕНА! Ты легенда!');
@@ -1139,7 +1139,7 @@ const CONS_CATS=[
 function consHead(cat,count,invMode){
   if(!game._openCons)game._openCons={};
   const open=!!game._openCons[(invMode?'i_':'s_')+cat.key];
-  return `<div class="cons-head" data-cons-cat="${(invMode?'i_':'s_')+cat.key}"><span>${cat.title}</span><span style="color:var(--muted);font-size:.75rem">${open?'▲':'▼'} ${count}</span></div>`;
+  return `<div class="cons-head" ${cat.key==='elite'?'style="background:linear-gradient(135deg,#4c1d95,#2e1065);border-color:#a78bfa;color:#e9d5ff"':''} data-cons-cat="${(invMode?'i_':'s_')+cat.key}"><span>${cat.title}</span><span style="color:var(--muted);font-size:.75rem">${open?'▲':'▼'} ${count}</span></div>`;
 }
 function bindConsHeads(box,rerender){
   box.querySelectorAll('[data-cons-cat]').forEach(h=>{h.onclick=()=>{const k=h.dataset.consCat;game._openCons[k]=!game._openCons[k];save();rerender()}});
@@ -1187,11 +1187,12 @@ function renderItems(){
     html+=consHead(cat,items.length,false);
     if(!game._openCons['s_'+cat.key])return;
     items.forEach(c=>{
-      html+=`<div class="item-card" data-cons="${c.id}">
-      <div class="item-icon" style="background:${c.color}22">${c.icon}</div>
+      const lk=c.unlock&&!(game.potUnl&&game.potUnl[c.id]);
+      html+=`<div class="item-card" data-cons="${c.id}" ${c.unlock?'style="border-color:#a78bfa88;background:linear-gradient(135deg,rgba(124,58,237,.18),transparent)"':''}>
+      <div class="item-icon" style="background:${lk?'#a78bfa22':c.color+'22'}">${lk?'❓':c.icon}</div>
       <div style="flex:1">
-        <div style="font-weight:800;font-size:0.9rem">${c.name}</div>
-        <div style="color:var(--muted);font-size:0.72rem">${c.desc}</div>
+        <div style="font-weight:800;font-size:0.9rem">${lk?'???':c.name}</div>
+        <div style="color:var(--muted);font-size:0.72rem">${lk?'Секретное зелье. Купи разблокировку, чтобы увидеть':c.desc}</div>
       </div>
       ${c.unlock&&!(game.potUnl&&game.potUnl[c.id])?`<button class="buy-btn" style="min-width:70px" data-cons-unl="${c.id}">🔒 ${formatNum(c.unlock)} ₽</button>`:`<button class="buy-btn" style="min-width:70px" data-cons-buy="${c.id}">${formatNum(c.cost)} ₽</button>`}
     </div>`;
@@ -1425,9 +1426,9 @@ function updateUI(full=true){
 
   // Achievements by rarity
   const al=document.getElementById('achList');al.innerHTML='';
-  const ACH_ORD=['common','rare','epic','legendary','mythic'];
-  const ACH_NM={common:'Обычные',rare:'Редкие',epic:'Эпические',legendary:'Легендарные',mythic:'Мифические'};
-  const ACH_CL={common:'#8e8e93',rare:'#0a84ff',epic:'#bf5af2',legendary:'#ffd700',mythic:'#ff2d55'};
+  const ACH_ORD=['common','rare','epic','legendary','mythic','secret','impossible'];
+  const ACH_NM={common:'Обычные',rare:'Редкие',epic:'Эпические',legendary:'Легендарные',mythic:'Мифические',secret:'🕵️ Секретные',impossible:'☠️ Невозможные'};
+  const ACH_CL={common:'#8e8e93',rare:'#0a84ff',epic:'#bf5af2',legendary:'#ffd700',mythic:'#ff2d55',secret:'#2dd4bf',impossible:'#ff1744'};
   const renderAch=(a)=>{
     const done=!!game.achievements[a.id];
     const claimed=!!game.claimedAch[a.id];
@@ -1437,8 +1438,10 @@ function updateUI(full=true){
     if(claimed)btn='<span style="color:var(--accent2);font-size:.75rem;font-weight:700">✅</span>';
     else if(done)btn=`<button class="claim-btn" data-ach="${a.id}">+${formatNum(a.reward)} ₽</button>`;
     else btn=`<span style="color:var(--muted);font-size:.72rem">🔒</span>`;
+    let pg='';if(claimed||done)pg='<div style="color:#30d158;font-size:.7rem;font-weight:700">✔ Выполнено</div>';else if(a.prog){try{const q=a.prog(),cu=Math.min(q[0]||0,q[1]),pc=Math.max(0,Math.min(100,cu/q[1]*100));pg='<div style="font-size:.7rem;color:var(--accent2);font-weight:700">'+formatNum(cu)+' / '+formatNum(q[1])+' · осталось '+formatNum(Math.max(0,q[1]-cu))+'</div><div style="height:4px;border-radius:2px;background:#ffffff18;margin-top:3px"><i style="display:block;height:100%;width:'+pc+'%;background:var(--accent2);border-radius:2px"></i></div>'}catch(e){}}
+    const hid=a.rarity==='secret'&&!done&&!claimed;
     card.innerHTML=`<div class="ach-icon">${done||claimed?a.icon:'🔒'}</div>
-      <div class="ach-info"><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div>${btn}`;
+      <div class="ach-info"><div class="ach-name">${hid?'???':a.name}</div><div class="ach-desc">${hid?'Секретное достижение. Условие скрыто, виден только прогресс':'Как получить: '+a.desc}</div>${pg}</div>${btn}`;
     al.appendChild(card);
   };
   ACH_ORD.forEach(r=>{
@@ -1662,13 +1665,20 @@ function drawMiniCoin(skin, size){
   const hex=v=>'#'+(v==null?0xffd700:v).toString(16).padStart(6,'0');
   const c1=hex(skin.color),c2=hex(skin.color2!=null?skin.color2:(skin.color!=null?skin.color:0xaa6600));
   const cx=size/2,cy=cx,r=cx-2;
+  const SP=(rr)=>{const sh=skin.shape||'circle';x.beginPath();
+   const poly=(n,rot,f)=>{for(let i=0;i<n;i++){const a=rot+i*2*Math.PI/n,q=f?f(i):1;i?x.lineTo(cx+Math.cos(a)*rr*q,cy+Math.sin(a)*rr*q):x.moveTo(cx+Math.cos(a)*rr*q,cy+Math.sin(a)*rr*q)}x.closePath()};
+   if(sh==='hex')poly(6,Math.PI/6);else if(sh==='octagon')poly(8,Math.PI/8);else if(sh==='diamond')poly(4,0,null);else if(sh==='star')poly(10,-Math.PI/2,i=>i%2?.55:1);
+   else if(sh==='square'){const q=rr*.88,w=q*2,rd=rr*.3;x.roundRect?x.roundRect(cx-q,cy-q,w,w,rd):x.rect(cx-q,cy-q,w,w)}
+   else if(sh==='shield'){x.moveTo(cx-rr*.85,cy-rr*.8);x.lineTo(cx+rr*.85,cy-rr*.8);x.lineTo(cx+rr*.85,cy+rr*.1);x.quadraticCurveTo(cx+rr*.8,cy+rr*.7,cx,cy+rr);x.quadraticCurveTo(cx-rr*.8,cy+rr*.7,cx-rr*.85,cy+rr*.1);x.closePath()}
+   else if(sh==='heart'){x.moveTo(cx,cy+rr*.9);x.bezierCurveTo(cx-rr*1.3,cy+rr*.1,cx-rr*.9,cy-rr*.95,cx,cy-rr*.35);x.bezierCurveTo(cx+rr*.9,cy-rr*.95,cx+rr*1.3,cy+rr*.1,cx,cy+rr*.9);x.closePath()}
+   else x.arc(cx,cy,rr,0,7)};
   let seed=0;for(const ch of String(skin.id))seed=(seed*31+ch.charCodeAt(0))>>>0;
   const rn=()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296;
   const m=skin.mult||0,t=m<5?0:m<50?1:m<500?2:m<2000?3:4,p=skin.pattern||'solid';
   const EM={fire:'🔥',ice:'❄️',space:'✨',gem:'💎',gold:'👑',neon:'⚡',wave:'🌊',stone:'🪨',metal:'⚙️',wood:'🍃',secret:'🌌'};
   const em=EM[p]||(t>=2?'⭐':'');
-  if(t>=3){x.save();x.shadowColor=c1;x.shadowBlur=size*0.09;x.fillStyle=c2;x.beginPath();x.arc(cx,cy,r-1,0,7);x.fill();x.restore()}
-  x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.clip();
+  if(t>=3){x.save();x.shadowColor=c1;x.shadowBlur=size*0.09;x.fillStyle=c2;SP(r-1);x.fill();x.restore()}
+  x.save();SP(r);x.clip();
   const g=x.createRadialGradient(cx-r*.35,cy-r*.35,2,cx,cy,r*1.05);g.addColorStop(0,c1);g.addColorStop(1,c2);x.fillStyle=g;x.fillRect(0,0,size,size);
   x.lineWidth=Math.max(1,size/60);
   if(p==='metal'){x.strokeStyle='rgba(255,255,255,.16)';for(let i=-size;i<size*2;i+=size/14){x.beginPath();x.moveTo(i,0);x.lineTo(i-size*.5,size);x.stroke()}}
@@ -1686,11 +1696,11 @@ function drawMiniCoin(skin, size){
   if(em&&t>=1){x.globalAlpha=.22;x.textAlign='center';x.textBaseline='middle';x.font=(size*.24)+'px Arial';[[.28,.3],[.74,.34],[.3,.76],[.72,.74]].forEach(q=>x.fillText(em,size*q[0],size*q[1]));x.globalAlpha=1}
   const gl=x.createLinearGradient(0,0,0,size*.55);gl.addColorStop(0,'rgba(255,255,255,.35)');gl.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gl;x.beginPath();x.ellipse(cx,cy*.55,r*.72,r*.45,0,0,7);x.fill();
   x.restore();
-  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=Math.max(2,size/28);x.beginPath();x.arc(cx,cy,r-1,0,7);x.stroke();
-  x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=Math.max(1,size/60);x.beginPath();x.arc(cx,cy,r*.82,0,7);x.stroke();
-  if(t>=2){x.setLineDash([size/30,size/30]);x.strokeStyle='rgba(255,255,255,.4)';x.beginPath();x.arc(cx,cy,r*.9,0,7);x.stroke();x.setLineDash([])}
+  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=Math.max(2,size/28);SP(r-1);x.stroke();
+  x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=Math.max(1,size/60);SP(r*.82);x.stroke();
+  if(t>=2){x.setLineDash([size/30,size/30]);x.strokeStyle='rgba(255,255,255,.4)';SP(r*.9);x.stroke();x.setLineDash([])}
   x.textAlign='center';x.textBaseline='middle';x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=size*.03;x.fillStyle='rgba(255,255,255,.92)';
-  x.font='bold '+(size*(t>=2?.34:.4))+'px Arial';x.fillText('₽',cx,cy+1);
+  x.font='bold '+(size*(t>=2?.34:.4))+'px Arial';if(skin.sym){x.shadowBlur=0;x.font=(size*.38)+'px Arial';x.fillText(skin.sym,cx,cy+size*.02)}else x.fillText('₽',cx,cy+1);
   return c;
 }
 
@@ -2548,22 +2558,29 @@ const Casino2={
     const box=$id('hubUpgrader').parentNode;
     [['hubCrash','✈️ Краш','linear-gradient(135deg,#0a84ff,#5e5ce6)',()=>this.openCrash()],['hubSlots','🎰 Слоты','linear-gradient(135deg,#ff2d55,#bf5af2)',()=>this.openSlots()]].forEach(([id,t,bg,fn])=>{
       const b=document.createElement('button');b.className='mini-btn';b.id=id;b.style.cssText='margin:0;background:'+bg;b.textContent=t;b.onclick=()=>{$id('casinoModal').classList.remove('show');fn()};box.appendChild(b)});
-    this.mk('crashModal','<div class="cf-head"><h2>✈️ Краш</h2><button class="cf-x" id="crashX">✕</button></div><div class="hint">Ставишь скин. Самолёт растёт до ×100 — забери до взрыва. Выигрыш: скин силой до ставка × множитель.</div><div class="cf-slots" style="grid-template-columns:1fr 1fr;margin:8px 0"><div class="cf-slot on" id="crashStake" style="aspect-ratio:auto;padding:10px">＋</div><div class="cf-slot on" id="crashPrize" style="aspect-ratio:auto;padding:10px;border-color:#30d158">Приз</div></div><div class="cg-box"><div class="cg-m" id="crashM">×1.00</div><div class="cg-plane" id="crashP">✈️</div></div><button class="btn-case-open" id="crashGo" style="width:100%">Старт</button>');
+    this.mk('crashModal','<div class="cf-head"><h2>✈️ Краш</h2><button class="cf-x" id="crashX">✕</button></div><div class="hint">Ставишь скин. Самолёт растёт до ×100 — забери до взрыва. Выигрыш: скин силой до ставка × множитель.</div><div class="cg-chips"><button class="btn-plain on" id="crM0">🪙 Скин</button><button class="btn-plain" id="crM1">💰 Баланс</button></div><div id="crBox" style="display:none;margin:6px 0"><input id="crBet" type="number" min="1" value="1000" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:#fff;font-weight:700;font-family:inherit;box-sizing:border-box"><div class="cg-chips" style="margin-top:6px"><button class="btn-plain" id="crH">1/2</button><button class="btn-plain" id="crD">2×</button><button class="btn-plain" id="crA">ВСЁ</button></div></div><div class="cf-slots" style="grid-template-columns:1fr 1fr;margin:8px 0"><div class="cf-slot on" id="crashStake" style="aspect-ratio:auto;padding:10px">＋</div><div class="cf-slot on" id="crashPrize" style="aspect-ratio:auto;padding:10px;border-color:#30d158">Приз</div></div><div class="cg-box"><div class="cg-m" id="crashM">×1.00</div><div class="cg-plane" id="crashP">✈️</div></div><button class="btn-case-open" id="crashGo" style="width:100%">Старт</button>');
     this.mk('slotsModal','<div class="cf-head"><h2>🎰 Слоты</h2><button class="cf-x" id="slotsX">✕</button></div><div class="hint">2 одинаковых — частичный возврат, 3 — крупный выигрыш (до ×60).</div><div class="cg-chips"><button class="btn-plain on" id="slMode0">💰 Баланс</button><button class="btn-plain" id="slMode1">🪙 Скин</button></div><div class="cg-reels"><div class="cg-reel" id="sr0">🍒</div><div class="cg-reel" id="sr1">🍒</div><div class="cg-reel" id="sr2">🍒</div></div><div id="slBet"></div><div id="slInfo" style="font-size:.8rem;min-height:36px;margin:6px 0"></div><button class="btn-case-open" id="slotsGo" style="width:100%">Крутить</button>');
     $id('crashX').onclick=()=>{if(!this.crash.run){$id('crashModal').classList.remove('show');$id('casinoModal').classList.add('show')}};
     $id('crashStake').onclick=()=>{if(!this.crash.run)SkinUtil.pick('Ставка · выбери скин',SkinUtil.mine(),x=>{this.crash.stake=x.id;this.showCrash()})};
     $id('crashGo').onclick=()=>this.crashBtn();
+    {const c=this.crash,bi=()=>$id('crBet'),sb=v=>{if(c.run)return;bi().value=Math.max(1,Math.floor(v));this.showCrash()};
+     const md=m=>{if(c.run)return;c.bm=m;$id('crM0').classList.toggle('on',!m);$id('crM1').classList.toggle('on',!!m);$id('crBox').style.display=m?'block':'none';this.showCrash()};
+     $id('crM0').onclick=()=>md(0);$id('crM1').onclick=()=>md(1);bi().oninput=()=>this.showCrash();
+     $id('crH').onclick=()=>sb((parseFloat(bi().value)||2)/2);$id('crD').onclick=()=>sb((parseFloat(bi().value)||1)*2);$id('crA').onclick=()=>sb(game.balance)}
     $id('slotsX').onclick=()=>{if(!this.sl.busy){$id('slotsModal').classList.remove('show');$id('casinoModal').classList.add('show')}};
     $id('slMode0').onclick=()=>{this.sl.mode=0;this.showSlots()};$id('slMode1').onclick=()=>{this.sl.mode=1;this.showSlots()};
     $id('slotsGo').onclick=()=>this.spin();
   },
-  showCrash(){const c=this.crash,x=c.stake?getSkin(c.stake):null;$id('crashStake').innerHTML=x?`<img src="${coinURL(x,96)}" style="width:52px"><b>${x.name} +${x.mult}%</b>`:'＋ Выбрать ставку';$id('crashPrize').innerHTML='<b>Приз</b><span style="color:#30d158;font-size:.8rem">'+(x&&c.run?(()=>{const p=SkinUtil.below(x.mult*c.m);return p?p.name+' +'+p.mult+'%':'—'})():'растёт с ×')+'</span>'},
+  showCrash(){const c=this.crash;
+    if(c.bm){const b=c.run?c.bet:Math.floor(parseFloat(($id('crBet')||{}).value)||0);$id('crashStake').innerHTML='<b>💰 '+formatNum(b)+' ₽</b>';$id('crashPrize').innerHTML='<b>Приз</b><span style="color:#30d158;font-size:.8rem">'+(c.run?formatNum(Math.floor(b*c.m))+' ₽':'ставка × множитель')+'</span>';return}
+    const x=c.stake?getSkin(c.stake):null;$id('crashStake').innerHTML=x?`<img src="${coinURL(x,96)}" style="width:52px"><b>${x.name} +${x.mult}%</b>`:'＋ Выбрать ставку';$id('crashPrize').innerHTML='<b>Приз</b><span style="color:#30d158;font-size:.8rem">'+(x&&c.run?(()=>{const p=SkinUtil.below(x.mult*c.m);return p?p.name+' +'+p.mult+'%':'—'})():'растёт с ×')+'</span>'},
   openCrash(){this.crash.m=1;$id('crashM').textContent='×1.00';$id('crashModal').classList.add('show');this.showCrash()},
   crashBtn(){
     const c=this.crash,btn=$id('crashGo');
     if(c.run){this.cash();return}
-    if(!c.stake||SkinUtil.have(c.stake)<1){showToast(SkinUtil.mine().length?'Выбери скин для ставки':'❌ Нет скина',false);return}
-    SkinUtil.take(c.stake);save();updateUI();
+    if(c.bm){const b=Math.floor(parseFloat($id('crBet').value)||0);if(b<1){showToast('Введи ставку',false);return}if(b>game.balance){showToast('Не хватает баланса',false);return}game.balance-=b;c.bet=b;save();updateUI()}
+    else{if(!c.stake||SkinUtil.have(c.stake)<1){showToast(SkinUtil.mine().length?'Выбери скин для ставки':'❌ Нет скина',false);return}
+    SkinUtil.take(c.stake);save();updateUI()}
     const u=Math.random();c.cp=Math.min(100,Math.max(1,0.96/(1-u)));c.run=true;c.t0=performance.now();btn.textContent='💸 Забрать';$id('crashM').style.color='#fff';
     const step=now=>{if(!c.run)return;const t=(now-c.t0)/1000;c.m=Math.exp(0.12*t);
       if(c.m>=c.cp){c.m=c.cp;this.end(false);return}
@@ -2575,6 +2592,9 @@ const Casino2={
   end(win){
     const c=this.crash;c.run=false;cancelAnimationFrame(c.raf);const st=getSkin(c.stake),btn=$id('crashGo');btn.textContent='Старт';
     $id('crashM').textContent='×'+c.m.toFixed(2);
+    if(c.bm){let w=0;if(win){w=Math.floor(c.bet*c.m);game.balance+=w;game.totalEarned+=w;game.bestCrash=Math.max(game.bestCrash||0,c.m);game.crashWins=(game.crashWins||0)+1;CasinoDrop.win(w);$id('crashM').style.color='#30d158';showToast('✈️ Забрал ×'+c.m.toFixed(2)+': +'+formatNum(w)+' ₽',false);if(typeof sfx==='function')sfx('buy')}
+     else{$id('crashM').style.color='#ff453a';$id('crashM').textContent='💥 ×'+c.m.toFixed(2);showToast('💥 Взорвался! −'+formatNum(c.bet)+' ₽',false)}
+     $id('crashP').style.left='8px';$id('crashP').style.bottom='8px';ExtraPack.trail(0);save();updateUI();checkAchievements();this.showCrash();CasinoDrop.roll('crash',c.bet);return}
     if(win){game.bestCrash=Math.max(game.bestCrash||0,c.m);const p=SkinUtil.below(st.mult*c.m)||st;SkinUtil.give(p.id);$id('crashM').style.color='#30d158';showToast(`✈️ Забрал ×${c.m.toFixed(2)}: «${p.name}» +${p.mult}%`,false);if(typeof sfx==='function')sfx('buy')}
     else{$id('crashM').style.color='#ff453a';$id('crashM').textContent='💥 ×'+c.m.toFixed(2);showToast('💥 Взорвался! Скин «'+st.name+'» потерян',false)}
     c.stake=null;$id('crashP').style.left='8px';$id('crashP').style.bottom='8px';ExtraPack.trail(0);if(win)game.crashWins=(game.crashWins||0)+1;save();updateUI();this.showCrash();CasinoDrop.roll('crash');
@@ -2747,8 +2767,11 @@ init(){
  $id('sapGo').onclick=()=>this.S.run?this.cash():this.start()}
 };
 window.showIndex=function(){
- const secs=[['⚪ Обычные',SKINS],['🎁 Необычные',UNC_SKINS],['🧿 Ксививайд',CX5],['🌌 Легенда',CX6],['🔮 Абсолют',CX7],['💎 Премиум',PREMIUM_SKINS],['👑 Элитные',ELITE_SKINS],['⚒️ Апгрейдер',UPG_SKINS],['🌠 Новая эра',XN30],['🧭 Коллекция (150)',XN150],['🎰 Казино (50)',window.CZ||[]],['🌋 Лавовый',window.CX8||[]],['🧊 Ледниковый',window.CX9||[]],['🕳️ Тёмная материя',window.CX10||[]]];
+ const G={cases:[['⚪ Обычные',SKINS],['🎁 Необычные',UNC_SKINS],['🧿 Ксививайд',CX5],['🌌 Легенда',CX6],['🔮 Абсолют',CX7],['💎 Премиум',PREMIUM_SKINS],['👑 Элитные',ELITE_SKINS],['🌋 Лавовый',window.CX8||[]],['🧊 Ледниковый',window.CX9||[]],['🕳️ Тёмная материя',window.CX10||[]]],casino:[['🎰 Казино (50)',window.CZ||[]],['🌠 Новые монеты (200)',window.NV||[]]],misc:[['⚒️ Апгрейдер',UPG_SKINS],['🌠 Новая эра',XN30],['🧭 Коллекция (150)',XN150]]};
+ const tab=window._ixTab||'cases',secs=G[tab];
  const box=$id('indexList');box.innerHTML='';let have=0,all=0;
+ {const bar=document.createElement('div');bar.style.cssText='display:flex;gap:6px;margin-bottom:10px';[['cases','📦 Кейсы'],['casino','🎰 Казино'],['misc','🎲 Разное']].forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.style.cssText='flex:1;padding:10px 4px;border-radius:10px;border:1px solid '+(k===tab?'var(--accent)':'var(--border)')+';background:'+(k===tab?'var(--accent)':'var(--card2)')+';color:#fff;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer';b.onclick=()=>{window._ixTab=k;window.showIndex()};bar.appendChild(b)});box.appendChild(bar);
+ if(tab==='misc'){const h=document.createElement('div');h.className='hint';h.textContent='Эти скины нельзя выбить из кейсов, но они могут выпасть в казино.';box.appendChild(h)}}
  secs.forEach(([title,arr])=>{const list=[...arr].sort((a,b)=>a.mult-b.mult),got=list.filter(s=>game.ownedSkins.includes(s.id)).length;have+=got;all+=list.length;
   box.insertAdjacentHTML('beforeend','<div class="ix-sec"><span>'+title+'</span><span style="color:var(--muted)">'+got+'/'+list.length+'</span></div><div class="ix-bar"><i style="width:'+(got/list.length*100)+'%"></i></div>');
   const g=document.createElement('div');g.className='ix-grid';
@@ -3436,12 +3459,20 @@ const CZN=['Фишка','Кости','Бубна','Червы','Пики','Тр�
 const CZP=['gold','neon','gem','metal','space','wave','fire','ice'];
 window.CZ=CZN.map((n,i)=>{const t=Math.floor(i/10)+1,h=(i*29+20)%360;return{id:'cz_'+(i+1),name:n,rarity:'cz'+t,color:h2i(h,90,56),color2:h2i(h,95,26),mult:Math.round(1000*Math.pow(8,i/49)),pattern:i>=49?'secret':CZP[i%CZP.length]}});
 CX_SKINS.push(...CZ);
+// ===== 200 новых монет (1000..95000), разные формы и символы =====
+const NVA=["Алый", "Багровый", "Янтарный", "Золотой", "Лимонный", "Салатовый", "Изумрудный", "Бирюзовый", "Лазурный", "Сапфировый", "Индиго", "Фиалковый", "Пурпурный", "Малиновый", "Розовый", "Серебряный", "Платиновый", "Ониксовый", "Ледяной", "Огненный", "Теневой", "Лунный", "Солнечный", "Звёздный", "Вечный"],NVT=[["Дракон", "🐉", "hex", "fire", 0], ["Корона", "👑", "star", "gold", 45], ["Кристалл", "💠", "diamond", "gem", 190], ["Щит", "🛡️", "shield", "metal", 215], ["Планета", "🪐", "octagon", "space", 270], ["Молния", "⚡", "square", "neon", 60], ["Сердце", "💖", "heart", "wave", 330], ["Феникс", "🦅", "circle", "ice", 20]];
+window.NV=Array.from({length:200},(_,g)=>{const t=g%8,k=Math.floor(g/8),T=NVT[t],h=(T[4]+k*13)%360;
+ return{id:'nv_'+(g+1),name:NVA[k]+' '+T[0],rarity:'nv'+(Math.floor(g/40)+1),color:h2i(h,88,58),color2:h2i((h+30)%360,90,24),mult:Math.round(1000*Math.pow(95,g/199)),pattern:T[3],shape:T[2],sym:T[1]}});
+CX_SKINS.push(...NV);
+Object.assign(RARITY_NAME,{nv1:'Новая I',nv2:'Новая II',nv3:'Новая III',nv4:'Новая IV',nv5:'Новая V'});
+Object.assign(RARITY_COLOR,{nv1:'#7bd88f',nv2:'#4ac8ff',nv3:'#c084fc',nv4:'#ffb020',nv5:'#ff2d95'});
 Object.assign(RARITY_NAME,{cz1:'Игорный',cz2:'Азартный',cz3:'Крупный',cz4:'Джекпот',cz5:'Легенда казино'});
 Object.assign(RARITY_COLOR,{cz1:'#9be04a',cz2:'#4ac8ff',cz3:'#c084fc',cz4:'#ffb020',cz5:'#ff2d95'});
 const czCount=()=>game.ownedSkins.filter(id=>String(id).startsWith('cz_')).length;
 window.CasinoDrop={
  P:0.008,
- pick(){const w=CZ.map(s=>1/s.mult),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<CZ.length;i++){r-=w[i];if(r<=0)return CZ[i]}return CZ[0]},
+ pool(){return[...CZ,...(window.NV||[]),...UPG_SKINS,...XN30,...XN150]},
+ pick(){const P=this.pool(),w=P.map(s=>1/Math.max(s.mult,1000)),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<P.length;i++){r-=w[i];if(r<=0)return P[i]}return P[0]},
  roll(kind,stake){
   try{
    if(stake!==undefined&&stake!==null&&stake<Math.max(1000,(game.balance+stake)*0.002))return;
@@ -3456,46 +3487,54 @@ window.CasinoDrop={
 };
 
 // ===== новые достижения =====
-const A=(id,name,desc,icon,check,d)=>({id,name,desc,icon,check,reward:1,rarity:'common',_d:d});
+const A=(id,name,desc,icon,check,d,p)=>({id,name,desc,icon,check,reward:1,rarity:'common',_d:d,prog:p});
 const add=[];
-[[1e10,.30,'10 млрд'],[1e11,.38,'100 млрд'],[1e12,.46,'1 трлн'],[1e13,.54,'10 трлн'],[1e14,.62,'100 трлн'],[1e16,.72,'10 квадр.'],[1e17,.80,'100 квадр.'],[1e18,.87,'1 квинт.'],[1e19,.93,'10 квинт.']].forEach(([v,d,t])=>add.push(A('te'+v,'Заработано '+t,'Всего заработано '+formatNum(v)+' ₽','💹',()=>game.totalEarned>=v,d)));
-[[1e13,.50],[1e14,.58],[1e15,.66],[1e16,.74],[1e17,.82],[1e18,.89],[1e19,.95]].forEach(([v,d])=>add.push(A('bl'+v,'Кубышка '+formatNum(v),formatNum(v)+' ₽ на балансе','🏦',()=>game.balance>=v,d)));
-[[2,.45],[3,.55],[10,.85],[20,.99]].forEach(([v,d])=>add.push(A('rbn'+v,'Перерождений: '+v,v+' перерождений','♻️',()=>(game.rebirths||0)>=v,d)));
-[[120,.60],[150,.80],[175,.92]].forEach(([v,d])=>add.push(A('cl'+v,'Забрано '+v,'Забери '+v+' достижений','🎖️',()=>Object.keys(game.claimedAch||{}).length>=v,d)));
-[[40,.35],[60,.45],[80,.55],[100,.63],[125,.70],[150,.78],[200,.88],[250,.96]].forEach(([v,d])=>add.push(A('sk'+v,'Скинов: '+v,'Владей '+v+' скинами','🪙',()=>game.ownedSkins.length>=v,d)));
-[[100,.30],[500,.45],[1000,.55],[3000,.65],[10000,.75],[30000,.85],[100000,.97]].forEach(([v,d])=>add.push(A('eq'+v,'Скин +'+formatNum(v)+'%','Надень скин с бонусом от +'+formatNum(v)+'%','✨',()=>getSkin(game.equippedSkin).mult>=v,d)));
-[[50,.40],[100,.50],[250,.62],[500,.74],[1000,.86]].forEach(([v,d])=>add.push(A('mu'+v,'Множитель ×'+v,'Общий множитель ≥ ×'+v,'🔱',()=>getMultiplier()>=v,d)));
-[[1,.05],[10,.20],[50,.35],[200,.60]].forEach(([v,d])=>add.push(A('mw'+v,'Мины: '+v,'Забери выигрыш в Минах '+v+' раз','💣',()=>(game.minesWins||0)>=v,d)));
-[[25,.30],[50,.45],[100,.60]].forEach(([v,d])=>add.push(A('sw'+v,'Сапёр: '+v,'Пройди Сапёра '+v+' раз','🧨',()=>(game.sapWins||0)>=v,d)));
-[[10,.30],[50,.50]].forEach(([v,d])=>add.push(A('cw'+v,'Краш: '+v,'Забери в Краше '+v+' раз','✈️',()=>(game.crashWins||0)>=v,d)));
-add.push(A('cs100','Потолок неба','Забери в Краше ×100','🌠',()=>(game.bestCrash||0)>=100,.90));
-[[250,.20],[500,.30],[1000,.45]].forEach(([v,d])=>add.push(A('ss'+v,'Слоты: '+v,'Сделай '+v+' круток в слотах','🎰',()=>(game.slotSpins||0)>=v,d)));
-[[10,.40],[25,.55],[50,.70]].forEach(([v,d])=>add.push(A('sj'+v,'Джекпотов: '+v,'Выбей '+v+' джекпотов в слотах','🍀',()=>(game.slotJackpots||0)>=v,d)));
-[[1,.10],[10,.25],[25,.40],[100,.65]].forEach(([v,d])=>add.push(A('uw'+v,'Апгрейд: '+v,'Выиграй в Апгрейдере '+v+' раз','⬆️',()=>(game.upgWins||0)>=v,d)));
-[[100,.50],[250,.70]].forEach(([v,d])=>add.push(A('cf'+v,'Крафтов: '+v,'Сделай '+v+' крафтов','⚒️',()=>(game.crafts||0)>=v,d)));
-[[10,.30],[25,.45],[50,.60]].forEach(([v,d])=>add.push(A('dl'+v,'Дуэлей: '+v,'Сыграй '+v+' дуэлей (Кейсы → Дуэли)','⚔️',()=>(game.duels||0)>=v,d)));
-[[10,.50],[25,.70]].forEach(([v,d])=>add.push(A('dw'+v,'Побед в дуэлях: '+v,'Выиграй '+v+' дуэлей','🏅',()=>(game.duelWins||0)>=v,d)));
-[[400,.50],[500,.60],[600,.70],[750,.82]].forEach(([v,d])=>add.push(A('tu'+v,'Улучшений: '+v,'Купи '+v+' улучшений','🛠️',()=>totalUpg()>=v,d)));
-[[250,.45],[500,.60],[1000,.75]].forEach(([v,d])=>add.push(A('ca'+v,'Кейсов: '+v,'Открой '+v+' кейсов','📦',()=>casesAll()>=v,d)));
+[[1e10,.30,'10 млрд'],[1e11,.38,'100 млрд'],[1e12,.46,'1 трлн'],[1e13,.54,'10 трлн'],[1e14,.62,'100 трлн'],[1e16,.72,'10 квадр.'],[1e17,.80,'100 квадр.'],[1e18,.87,'1 квинт.'],[1e19,.93,'10 квинт.']].forEach(([v,d,t])=>add.push(A('te'+v,'Заработано '+t,'Всего заработано '+formatNum(v)+' ₽','💹',()=>game.totalEarned>=v,d,()=>[game.totalEarned,v])));
+[[1e13,.50],[1e14,.58],[1e15,.66],[1e16,.74],[1e17,.82],[1e18,.89],[1e19,.95]].forEach(([v,d])=>add.push(A('bl'+v,'Кубышка '+formatNum(v),formatNum(v)+' ₽ на балансе','🏦',()=>game.balance>=v,d,()=>[game.balance,v])));
+[[2,.45],[3,.55],[10,.85],[20,.99]].forEach(([v,d])=>add.push(A('rbn'+v,'Перерождений: '+v,v+' перерождений','♻️',()=>(game.rebirths||0)>=v,d,()=>[(game.rebirths||0),v])));
+[[120,.60],[150,.80],[175,.92]].forEach(([v,d])=>add.push(A('cl'+v,'Забрано '+v,'Забери '+v+' достижений','🎖️',()=>Object.keys(game.claimedAch||{}).length>=v,d,()=>[Object.keys(game.claimedAch||{}).length,v])));
+[[40,.35],[60,.45],[80,.55],[100,.63],[125,.70],[150,.78],[200,.88],[250,.96]].forEach(([v,d])=>add.push(A('sk'+v,'Скинов: '+v,'Владей '+v+' скинами','🪙',()=>game.ownedSkins.length>=v,d,()=>[game.ownedSkins.length,v])));
+[[100,.30],[500,.45],[1000,.55],[3000,.65],[10000,.75],[30000,.85],[100000,.97]].forEach(([v,d])=>add.push(A('eq'+v,'Скин +'+formatNum(v)+'%','Надень скин с бонусом от +'+formatNum(v)+'%','✨',()=>getSkin(game.equippedSkin).mult>=v,d,()=>[getSkin(game.equippedSkin).mult,v])));
+[[50,.40],[100,.50],[250,.62],[500,.74],[1000,.86]].forEach(([v,d])=>add.push(A('mu'+v,'Множитель ×'+v,'Общий множитель ≥ ×'+v,'🔱',()=>getMultiplier()>=v,d,()=>[getMultiplier(),v])));
+[[1,.05],[10,.20],[50,.35],[200,.60]].forEach(([v,d])=>add.push(A('mw'+v,'Мины: '+v,'Забери выигрыш в Минах '+v+' раз','💣',()=>(game.minesWins||0)>=v,d,()=>[(game.minesWins||0),v])));
+[[25,.30],[50,.45],[100,.60]].forEach(([v,d])=>add.push(A('sw'+v,'Сапёр: '+v,'Пройди Сапёра '+v+' раз','🧨',()=>(game.sapWins||0)>=v,d,()=>[(game.sapWins||0),v])));
+[[10,.30],[50,.50]].forEach(([v,d])=>add.push(A('cw'+v,'Краш: '+v,'Забери в Краше '+v+' раз','✈️',()=>(game.crashWins||0)>=v,d,()=>[(game.crashWins||0),v])));
+add.push(A('cs100','Потолок неба','Забери в Краше ×100','🌠',()=>(game.bestCrash||0)>=100,.90,()=>[(game.bestCrash||0),100]));
+[[250,.20],[500,.30],[1000,.45]].forEach(([v,d])=>add.push(A('ss'+v,'Слоты: '+v,'Сделай '+v+' круток в слотах','🎰',()=>(game.slotSpins||0)>=v,d,()=>[(game.slotSpins||0),v])));
+[[10,.40],[25,.55],[50,.70]].forEach(([v,d])=>add.push(A('sj'+v,'Джекпотов: '+v,'Выбей '+v+' джекпотов в слотах','🍀',()=>(game.slotJackpots||0)>=v,d,()=>[(game.slotJackpots||0),v])));
+[[1,.10],[10,.25],[25,.40],[100,.65]].forEach(([v,d])=>add.push(A('uw'+v,'Апгрейд: '+v,'Выиграй в Апгрейдере '+v+' раз','⬆️',()=>(game.upgWins||0)>=v,d,()=>[(game.upgWins||0),v])));
+[[100,.50],[250,.70]].forEach(([v,d])=>add.push(A('cf'+v,'Крафтов: '+v,'Сделай '+v+' крафтов','⚒️',()=>(game.crafts||0)>=v,d,()=>[(game.crafts||0),v])));
+[[10,.30],[25,.45],[50,.60]].forEach(([v,d])=>add.push(A('dl'+v,'Дуэлей: '+v,'Сыграй '+v+' дуэлей (Кейсы → Дуэли)','⚔️',()=>(game.duels||0)>=v,d,()=>[(game.duels||0),v])));
+[[10,.50],[25,.70]].forEach(([v,d])=>add.push(A('dw'+v,'Побед в дуэлях: '+v,'Выиграй '+v+' дуэлей','🏅',()=>(game.duelWins||0)>=v,d,()=>[(game.duelWins||0),v])));
+[[400,.50],[500,.60],[600,.70],[750,.82]].forEach(([v,d])=>add.push(A('tu'+v,'Улучшений: '+v,'Купи '+v+' улучшений','🛠️',()=>totalUpg()>=v,d,()=>[totalUpg(),v])));
+[[250,.45],[500,.60],[1000,.75]].forEach(([v,d])=>add.push(A('ca'+v,'Кейсов: '+v,'Открой '+v+' кейсов','📦',()=>casesAll()>=v,d,()=>[casesAll(),v])));
 [[8,'Лавовый','🌋',[.50,.62]],[9,'Ледниковый','🧊',[.68,.80]],[10,'Тёмная материя','🕳️',[.85,.95]]].forEach(([n,t,ic,ds])=>{
- add.push(A('cs'+n+'a','Кейс «'+t+'»','Открой кейс «'+t+'»',ic,()=>(game['casesOpened'+n]||0)>=1,ds[0]));
- add.push(A('cs'+n+'b','«'+t+'» ×10','Открой 10 кейсов «'+t+'»',ic,()=>(game['casesOpened'+n]||0)>=10,ds[1]))});
-[[1,.30],[5,.40],[10,.50],[20,.60],[30,.70],[40,.80],[50,.90]].forEach(([v,d])=>add.push(A('cz'+v,'Казино-скинов: '+v,'Собери '+v+' скинов, выпадающих в казино','🎲',()=>czCount()>=v,d)));
-[[1e6,.30],[1e8,.40],[1e10,.50],[1e12,.60],[1e14,.70],[1e16,.80]].forEach(([v,d])=>add.push(A('bw'+v,'Крупный выигрыш','Выиграй '+formatNum(v)+' ₽ за одну игру в казино','💰',()=>(game.bigWin||0)>=v,d)));
+ add.push(A('cs'+n+'a','Кейс «'+t+'»','Открой кейс «'+t+'»',ic,()=>(game['casesOpened'+n]||0)>=1,ds[0],()=>[(game['casesOpened'+n]||0),1]));
+ add.push(A('cs'+n+'b','«'+t+'» ×10','Открой 10 кейсов «'+t+'»',ic,()=>(game['casesOpened'+n]||0)>=10,ds[1],()=>[(game['casesOpened'+n]||0),10]))});
+[[1,.30],[5,.40],[10,.50],[20,.60],[30,.70],[40,.80],[50,.90]].forEach(([v,d])=>add.push(A('cz'+v,'Казино-скинов: '+v,'Собери '+v+' скинов, выпадающих в казино','🎲',()=>czCount()>=v,d,()=>[czCount(),v])));
+[[1e6,.30],[1e8,.40],[1e10,.50],[1e12,.60],[1e14,.70],[1e16,.80]].forEach(([v,d])=>add.push(A('bw'+v,'Крупный выигрыш','Выиграй '+formatNum(v)+' ₽ за одну игру в казино','💰',()=>(game.bigWin||0)>=v,d,()=>[(game.bigWin||0),v])));
 achievements.push(...add);
 
 // ===== переоценка: дубликаты, редкость по сложности, новые цены и порядок =====
 (()=>{
- const seen=new Set(),uniq=[];achievements.forEach(a=>{if(!seen.has(a.id)){seen.add(a.id);uniq.push(a)}});
+ const seen=new Set(),sn=new Set(),uniq=[];achievements.forEach(a=>{const k2=(a.name+'|'+a.desc).toLowerCase().replace(/\s+/g,' ');if(!seen.has(a.id)&&!sn.has(k2)){seen.add(a.id);sn.add(k2);uniq.push(a)}});
  const old=uniq.filter(a=>a._d==null),byR=[...old].sort((a,b)=>(a.reward-b.reward)||(uniq.indexOf(a)-uniq.indexOf(b)));
  byR.forEach((a,i)=>{a._d=old.length>1?i/(old.length-1):0});
- const sorted=[...uniq].sort((a,b)=>(a._d-b._d)||(uniq.indexOf(a)-uniq.indexOf(b))),n=sorted.length,LOW=50,TOP=5e13;
+ const sorted=[...uniq].sort((a,b)=>(a._d-b._d)||(uniq.indexOf(a)-uniq.indexOf(b))),n=sorted.length,LOW=100,TOP=1e5;
  sorted.forEach((a,i)=>{
   const t=n>1?i/(n-1):0,v=LOW*Math.pow(TOP/LOW,Math.pow(t,1.1)),p=Math.pow(10,Math.max(0,Math.floor(Math.log10(v))-1));
-  a.reward=Math.max(10,Math.round(v/p)*p);
+  a.reward=Math.min(1e5,Math.max(100,Math.round(v/p)*p));
   a.rarity=t<.32?'common':t<.58?'rare':t<.78?'epic':t<.91?'legendary':'mythic';
  });
  achievements.length=0;achievements.push(...sorted);
+ const S=(id,nm,ds,ic,ck,pr,rar)=>({id,name:nm,desc:ds,icon:ic,check:ck,prog:pr,reward:1e5,rarity:rar});
+ achievements.push(
+  S('sx1','Неутомимый','Сделай 250 000 кликов','🌀',()=>game.totalClicks>=250000,()=>[game.totalClicks,250000],'secret'),
+  S('sx2','Кейсовый маньяк','Открой 5 000 кейсов','🎁',()=>casesAll()>=5000,()=>[casesAll(),5000],'secret'),
+  S('sx3','Пилот-легенда','Забери в Краше 100 раз','🛩️',()=>(game.crashWins||0)>=100,()=>[game.crashWins||0,100],'secret'),
+  S('im1','Король казино','Выиграй 1 квинтиллион ₽ за одну игру в казино','🎩',()=>(game.bigWin||0)>=1e18,()=>[game.bigWin||0,1e18],'impossible'),
+  S('im2','Абсолютная монета','Надень скин с бонусом +90 000%','🪐',()=>getSkin(game.equippedSkin).mult>=90000,()=>[getSkin(game.equippedSkin).mult,90000],'impossible'),
+  S('im3','Бог кликера','Накопи 1 нониллион ₽ на балансе','⚜️',()=>game.balance>=1e30,()=>[game.balance,1e30],'impossible'));
 })();
 })();
 (()=>{
@@ -3504,7 +3543,7 @@ const css=document.createElement('style');css.textContent=`
 #indexClose2:active{transform:scale(.96);box-shadow:0 2px 10px rgba(124,58,237,.5)}
 #indexModal .modal-actions{display:none!important}`;document.head.appendChild(css);
 // ---- skins: casino prizes only from NON-case skins ----
-const NC=()=>{const m={};[...UPG_SKINS,...(window.XN30||[]),...(window.XN150||[]),...(window.CZ||[])].forEach(s=>{if(s.mult>0)m[s.id]=s});return Object.values(m)};
+const NC=()=>{const m={};[...UPG_SKINS,...(window.XN30||[]),...(window.XN150||[]),...(window.CZ||[]),...(window.NV||[])].forEach(s=>{if(s.mult>0)m[s.id]=s});return Object.values(m)};
 window.NONCASE=NC;
 SkinUtil.list=()=>NC();
 Upgrader.allSkins=()=>NC();
@@ -3544,24 +3583,24 @@ if(hd){
 window.getMineBonus=()=>1;
 // ---------- elite upgrades ----------
 const EL=[
- {id:'ek1',ic:'⚡',nm:'Импульс кванта',ds:'Усиливает каждый клик',P:2e14,tx:l=>'клики ×'+(1+.2*l).toFixed(1)},
- {id:'ek2',ic:'👊',nm:'Кулак титана',ds:'Мощный множитель кликов',P:5e14,tx:l=>'клики ×'+(1+.4*l).toFixed(1)},
- {id:'em1',ic:'✖️',nm:'Резонанс',ds:'Общий множитель дохода',P:3e14,tx:l=>'множитель ×'+(1+.1*l).toFixed(1)},
- {id:'em2',ic:'🌌',nm:'Сингулярность',ds:'Огромный множитель дохода',P:7.5e14,tx:l=>'множитель ×'+(1+.2*l).toFixed(1)},
+ {id:'ek1',ic:'⚡',nm:'Импульс кванта',ds:'Усиливает каждый клик',P:2e14,tx:l=>'клики ×'+(1+.1*l).toFixed(1)},
+ {id:'ek2',ic:'👊',nm:'Кулак титана',ds:'Мощный множитель кликов',P:5e14,tx:l=>'клики ×'+(1+.2*l).toFixed(1)},
+ {id:'em1',ic:'✖️',nm:'Резонанс',ds:'Общий множитель дохода',P:3e14,tx:l=>'множитель ×'+(1+.05*l).toFixed(1)},
+ {id:'em2',ic:'🌌',nm:'Сингулярность',ds:'Огромный множитель дохода',P:7.5e14,tx:l=>'множитель ×'+(1+.1*l).toFixed(1)},
  {id:'ec1',ic:'🎯',nm:'Точный удар',ds:'Шанс крита',P:4e14,tx:l=>'крит +'+(.5*l).toFixed(1)+'%'},
  {id:'ec2',ic:'💥',nm:'Разрушитель',ds:'Сила крита',P:9e14,tx:l=>'сила крита +'+(.25*l).toFixed(2)},
- {id:'el1',ic:'🍀',nm:'Клевер',ds:'Удача в кейсах',P:6e14,tx:l=>'удача +'+(.04*l*100).toFixed(0)+'%'},
- {id:'el2',ic:'🔮',nm:'Провидец',ds:'Большая удача в кейсах',P:1e15,tx:l=>'удача +'+(.12*l*100).toFixed(0)+'%'}
+ {id:'el1',ic:'🍀',nm:'Клевер',ds:'Удача в кейсах',P:6e14,tx:l=>'удача +'+(.02*l*100).toFixed(0)+'%'},
+ {id:'el2',ic:'🔮',nm:'Провидец',ds:'Большая удача в кейсах',P:1e15,tx:l=>'удача +'+(.06*l*100).toFixed(0)+'%'}
 ];
 EL.forEach(e=>{e.mx=30;e.col='#'+['ffd60a','ff9f0a','bf5af2','ff2d95','30d158','64d2ff','a3e635','5ac8fa'][EL.indexOf(e)]});
 const L=id=>(game.upgrades&&game.upgrades[id])||0;
 const _cp=getClickPower,_gm=getMultiplier,_cc=getCritChance,_cw=getCritPower,_cl=getCaseLuck;
-window.getClickPower=()=>_cp()*(1+.2*L('ek1'))*(1+.4*L('ek2'));
-window.getMultiplier=()=>_gm()*(1+.1*L('em1'))*(1+.2*L('em2'));
+window.getClickPower=()=>_cp()*(1+.1*L('ek1'))*(1+.2*L('ek2'));
+window.getMultiplier=()=>_gm()*(1+.05*L('em1'))*(1+.1*L('em2'));
 window.getCritChance=()=>Math.min(100,_cc()+.5*L('ec1'));
 window.getCritPower=()=>_cw()+.25*L('ec2');
-window.getCaseLuck=()=>_cl()+.5*L('el1')+1.5*L('el2');
-const lvCost=(e,l)=>Math.floor(e.P*.02*Math.pow(1.3,l));
+window.getCaseLuck=()=>_cl()+.25*L('el1')+.75*L('el2');
+const lvCost=(e,l)=>Math.floor(e.P*.05*Math.pow(1.45,l));
 const lvBulk=(e,q)=>{let t=0;const l=L(e.id);for(let i=0;i<q;i++)t+=lvCost(e,l+i);return t};
 function renderElite(){
  const list=$id('upgradeList');if(!list)return;game.eliteOpen=game.eliteOpen||{};game._openCats=game._openCats||{};
