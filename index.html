@@ -778,94 +778,106 @@ const RARITY_COLOR = {common:'#8e8e93',rare:'#0a84ff',veryrare:'#64d2ff',epic:'#
 
 function getSkin(id){
   if(!id||id==='default')return DEFAULT_SKIN;
-  return SKINS.find(s=>s.id===id)||PREMIUM_SKINS.find(s=>s.id===id)||ELITE_SKINS.find(s=>s.id===id)||UPG_SKINS.find(s=>s.id===id)||CX_SKINS.find(s=>s.id===id)||DEFAULT_SKIN;
+  if(getSkin._id===id&&getSkin._s)return getSkin._s;
+  const r=SKINS.find(s=>s.id===id)||PREMIUM_SKINS.find(s=>s.id===id)||ELITE_SKINS.find(s=>s.id===id)||UPG_SKINS.find(s=>s.id===id)||CX_SKINS.find(s=>s.id===id);
+  if(r){getSkin._id=id;getSkin._s=r}
+  return r||DEFAULT_SKIN;
 }
-function getSkinMult(){const s=getSkin(game.equippedSkin);return 1+(s.mult||0)/100}
+function getSkinMult(){const s=getSkin(game.equippedSkin);return 1+(s.mult||0)/100*(1+0.1*((game.upgrades&&game.upgrades.skinmult)||0))}
 
 // ==================== UPGRADES (many) ====================
 const upgrades = [
-  {id:'c1',name:'Усиление клика',desc:'+1 ₽ к клику',icon:'👊',color:'#ff2d55',base:20,mult:1.48,max:50,type:'click',val:1},
-  {id:'c2',name:'Железная рука',desc:'+5 ₽ к клику',icon:'💪',color:'#ff9f0a',base:150,mult:1.55,max:40,type:'click',val:5},
-  {id:'c3',name:'Кулак судьбы',desc:'+25 ₽ к клику',icon:'🥊',color:'#ff453a',base:1200,mult:1.62,max:35,type:'click',val:25},
-  {id:'c4',name:'Молот Коча',desc:'+100 ₽ к клику',icon:'🔨',color:'#ff6b00',base:12000,mult:1.68,max:30,type:'click',val:100},
-  {id:'c5',name:'Удар титана',desc:'+500 ₽ к клику',icon:'💥',color:'#ff2d55',base:120000,mult:1.75,max:25,type:'click',val:500},
-  {id:'a1',name:'Уличный пацан',desc:'+0.5 ₽/сек',icon:'🧢',color:'#30d158',base:50,mult:1.5,max:50,type:'passive',val:0.5},
-  {id:'a2',name:'Братан в деле',desc:'+3 ₽/сек',icon:'🤝',color:'#0a84ff',base:400,mult:1.58,max:40,type:'passive',val:3},
-  {id:'a3',name:'Кочевский отряд',desc:'+12 ₽/сек',icon:'👥',color:'#bf5af2',base:3500,mult:1.65,max:35,type:'passive',val:12},
-  {id:'a4',name:'Империя Коча',desc:'+50 ₽/сек',icon:'🏛️',color:'#64d2ff',base:35000,mult:1.72,max:30,type:'passive',val:50},
-  {id:'a5',name:'Корпорация',desc:'+200 ₽/сек',icon:'🏢',color:'#30d158',base:250000,mult:1.8,max:25,type:'passive',val:200},
-  {id:'auto1',name:'Автокликер I',desc:'+0.5 автоклик/сек',icon:'🤖',color:'#0a84ff',base:500000,mult:1.85,max:20,type:'auto',val:0.5},
-  {id:'auto2',name:'Автокликер II',desc:'+1 автоклик/сек',icon:'🦾',color:'#64d2ff',base:2500000,mult:1.9,max:15,type:'auto',val:1},
-  {id:'auto3',name:'Автокликер III',desc:'+2 автоклика/сек',icon:'⚙️',color:'#bf5af2',base:15000000,mult:2.0,max:12,type:'auto',val:2},
-  {id:'m1',name:'Братанский вайб',desc:'×1.15 ко всему',icon:'🔥',color:'#ff2d55',base:1500,mult:2.3,max:12,type:'mult',val:0.15},
-  {id:'m2',name:'Золотой дождь',desc:'×1.3 ко всему',icon:'🌧️',color:'#ffd60a',base:50000,mult:2.6,max:6,type:'mult',val:0.3},
-  {id:'m3',name:'Божественный множитель',desc:'×1.5 ко всему',icon:'✨',color:'#ff9f0a',base:500000,mult:3.2,max:4,type:'mult',val:0.5},
-  {id:'cr',name:'Критический удар',desc:'Шанс крита ×5',icon:'⚡',color:'#ff9f0a',base:500,mult:1.65,max:10,type:'crit',val:6},
-  {id:'cr2',name:'Сверхкрит',desc:'Крит бьёт ×8',icon:'🌩️',color:'#ff453a',base:8000,mult:1.9,max:5,type:'critpower',val:1},
-  {id:'bs',name:'Адреналин',desc:'×3 на 30 сек',icon:'💉',color:'#ff2d55',base:1500,mult:1.75,max:20,type:'boost',val:1},
-  {id:'luck',name:'Удача Коча',desc:'+1% к шансу крита',icon:'🍀',color:'#30d158',base:2000,mult:1.8,max:10,type:'luck',val:2},
-  {id:'mineb',name:'Шахтёр',desc:'+5% к выигрышу в Минах',icon:'⛏️',color:'#ff9f0a',base:3000,mult:1.7,max:10,type:'minebonus',val:5},
-  {id:'caseb',name:'Охотник за кейсами',desc:'-5% цена кейсов',icon:'🎁',color:'#bf5af2',base:300000,mult:2.5,max:5,type:'casebonus',val:5},
-  {id:'offline',name:'Ночной режим',desc:'+10% пассивки',icon:'🌙',color:'#64d2ff',base:4000,mult:1.85,max:8,type:'passivemult',val:0.1},
-  {id:'clickm',name:'Тапатель бог',desc:'+10% к силе клика',icon:'👆',color:'#ff2d55',base:2500,mult:1.75,max:10,type:'clickmult',val:0.1},
-  {id:'rich',name:'Толстый карман',desc:'+5% ко всему доходу',icon:'👛',color:'#ffd700',base:10000,mult:2.2,max:10,type:'globalmult',val:0.05},
-  {id:'c6',name:'Удар метеора',desc:'+2500 ₽ к клику',icon:'☄️',color:'#ff453a',base:800000,mult:1.85,max:20,type:'click',val:2500},
-  {id:'c7',name:'Большой взрыв',desc:'+10000 ₽ к клику',icon:'🌌',color:'#bf5af2',base:8000000,mult:1.9,max:15,type:'click',val:10000},
-  {id:'c8',name:'Квантовый тап',desc:'+50000 ₽ к клику',icon:'⚛️',color:'#64d2ff',base:100000000,mult:2.0,max:12,type:'click',val:50000},
-  {id:'a6',name:'Галактика',desc:'+1000 ₽/сек',icon:'🪐',color:'#0a84ff',base:2000000,mult:1.9,max:20,type:'passive',val:1000},
-  {id:'a7',name:'Вселенная',desc:'+5000 ₽/сек',icon:'🌍',color:'#30d158',base:25000000,mult:2.0,max:15,type:'passive',val:5000},
-  {id:'a8',name:'Мультивселенная',desc:'+25000 ₽/сек',icon:'🌀',color:'#bf5af2',base:300000000,mult:2.1,max:12,type:'passive',val:25000},
-  {id:'m4',name:'Хорус множитель',desc:'×1.4 ко всему',icon:'🎵',color:'#ff2d55',base:3000000,mult:2.9,max:5,type:'mult',val:0.4},
-  {id:'m5',name:'Абсолют',desc:'×2 ко всему',icon:'👑',color:'#ffd700',base:100000000,mult:3.5,max:2,type:'mult',val:1.0},
-  {id:'cr3',name:'Мегакрит',desc:'Крит ×12 база',icon:'💢',color:'#ff2d55',base:100000,mult:2.0,max:3,type:'critpower',val:2},
-  {id:'luck2',name:'Клевер судьбы',desc:'+3% крит',icon:'☘️',color:'#30d158',base:50000,mult:1.9,max:15,type:'luck',val:3},
-  {id:'mineb2',name:'Сапёр-профи',desc:'+8% к минам',icon:'💣',color:'#ff9f0a',base:80000,mult:1.85,max:10,type:'minebonus',val:8},
-  {id:'caseb2',name:'Скидка VIP',desc:'-3% цена кейсов',icon:'🎫',color:'#bf5af2',base:8000000,mult:2.7,max:8,type:'casebonus',val:3},
-  {id:'caseluck',name:'Удача кейсов',desc:'+8% к шансу редких дропов',icon:'🎲',color:'#ffd700',base:40000000,mult:2.8,max:10,type:'caseluck',val:1},
+  {id:'c1',name:'Сила клика I',desc:'За уровень: +1 ₽ к клику',icon:'👊',color:'#ff2d55',base:20,mult:1.48,max:50,type:'click',val:1},
+  {id:'c2',name:'Сила клика II',desc:'За уровень: +5 ₽ к клику',icon:'💪',color:'#ff9f0a',base:150,mult:1.55,max:40,type:'click',val:5},
+  {id:'c3',name:'Сила клика III',desc:'За уровень: +25 ₽ к клику',icon:'🥊',color:'#ff453a',base:1200,mult:1.62,max:35,type:'click',val:25},
+  {id:'c4',name:'Сила клика IV',desc:'За уровень: +100 ₽ к клику',icon:'🔨',color:'#ff6b00',base:12000,mult:1.68,max:30,type:'click',val:100},
+  {id:'c5',name:'Сила клика VI',desc:'За уровень: +500 ₽ к клику',icon:'💥',color:'#ff2d55',base:120000,mult:1.75,max:25,type:'click',val:500},
+  {id:'a1',name:'Доход в секунду I',desc:'За уровень: +0.5 ₽/сек',icon:'🧢',color:'#30d158',base:50,mult:1.5,max:50,type:'passive',val:0.5},
+  {id:'a2',name:'Доход в секунду II',desc:'За уровень: +3 ₽/сек',icon:'🤝',color:'#0a84ff',base:400,mult:1.58,max:40,type:'passive',val:3},
+  {id:'a3',name:'Доход в секунду III',desc:'За уровень: +12 ₽/сек',icon:'👥',color:'#bf5af2',base:3500,mult:1.65,max:35,type:'passive',val:12},
+  {id:'a4',name:'Доход в секунду IV',desc:'За уровень: +50 ₽/сек',icon:'🏛️',color:'#64d2ff',base:35000,mult:1.72,max:30,type:'passive',val:50},
+  {id:'a5',name:'Доход в секунду VI',desc:'За уровень: +200 ₽/сек',icon:'🏢',color:'#30d158',base:250000,mult:1.8,max:25,type:'passive',val:200},
+  {id:'auto1',name:'Автокликер I',desc:'За уровень: +0.5 автоклик/сек',icon:'🤖',color:'#0a84ff',base:500000,mult:1.85,max:20,type:'auto',val:0.5},
+  {id:'auto2',name:'Автокликер II',desc:'За уровень: +1 автоклик/сек',icon:'🦾',color:'#64d2ff',base:2500000,mult:1.9,max:15,type:'auto',val:1},
+  {id:'auto3',name:'Автокликер III',desc:'За уровень: +2 автоклик/сек',icon:'⚙️',color:'#bf5af2',base:15000000,mult:2.0,max:12,type:'auto',val:2},
+  {id:'m1',name:'Множитель дохода I',desc:'За уровень: +0.15 к множителю дохода',icon:'🔥',color:'#ff2d55',base:1500,mult:2.3,max:12,type:'mult',val:0.15},
+  {id:'m2',name:'Множитель дохода II',desc:'За уровень: +0.3 к множителю дохода',icon:'🌧️',color:'#ffd60a',base:50000,mult:2.6,max:6,type:'mult',val:0.3},
+  {id:'m3',name:'Множитель дохода III',desc:'За уровень: +0.5 к множителю дохода',icon:'✨',color:'#ff9f0a',base:500000,mult:3.2,max:4,type:'mult',val:0.5},
+  {id:'cr',name:'Шанс крита I',desc:'За уровень: +2% к шансу крита',icon:'⚡',color:'#ff9f0a',base:500,mult:1.65,max:10,type:'crit',val:2},
+  {id:'cr2',name:'Сила крита I',desc:'За уровень: +1 к силе крита',icon:'🌩️',color:'#ff453a',base:8000,mult:1.9,max:5,type:'critpower',val:1},
+  {id:'bs',name:'Адреналин ×3',desc:'Покупка: доход ×3 на 30 сек',icon:'💉',color:'#ff2d55',base:1500,mult:1.75,max:20,type:'boost',val:1},
+  {id:'luck',name:'Шанс крита II',desc:'За уровень: +1% к шансу крита',icon:'🍀',color:'#30d158',base:2000,mult:1.8,max:10,type:'luck',val:1},
+  {id:'mineb',name:'Бонус в Минах I',desc:'+5% к выигрышу в Минах',icon:'⛏️',color:'#ff9f0a',base:3000,mult:1.7,max:10,type:'minebonus',val:5},
+  {id:'caseb',name:'Скидка на кейсы I',desc:'За уровень: −5% к цене кейсов',icon:'🎁',color:'#bf5af2',base:300000,mult:2.5,max:5,type:'casebonus',val:5},
+  {id:'offline',name:'Усилитель пассивки I',desc:'За уровень: +10% к пассивному доходу',icon:'🌙',color:'#64d2ff',base:4000,mult:1.85,max:8,type:'passivemult',val:0.1},
+  {id:'clickm',name:'Усилитель клика I',desc:'За уровень: +10% к силе клика',icon:'👆',color:'#ff2d55',base:2500,mult:1.75,max:10,type:'clickmult',val:0.1},
+  {id:'rich',name:'Бонус ко всему доходу I',desc:'За уровень: +5% ко всему доходу',icon:'👛',color:'#ffd700',base:10000,mult:2.2,max:10,type:'globalmult',val:0.05},
+  {id:'c6',name:'Сила клика IX',desc:'За уровень: +2 500 ₽ к клику',icon:'☄️',color:'#ff453a',base:800000,mult:1.85,max:20,type:'click',val:2500},
+  {id:'c7',name:'Сила клика X',desc:'За уровень: +10 000 ₽ к клику',icon:'🌌',color:'#bf5af2',base:8000000,mult:1.9,max:15,type:'click',val:10000},
+  {id:'c8',name:'Сила клика XII',desc:'За уровень: +50 000 ₽ к клику',icon:'⚛️',color:'#64d2ff',base:100000000,mult:2.0,max:12,type:'click',val:50000},
+  {id:'a6',name:'Доход в секунду VIII',desc:'За уровень: +1 000 ₽/сек',icon:'🪐',color:'#0a84ff',base:2000000,mult:1.9,max:20,type:'passive',val:1000},
+  {id:'a7',name:'Доход в секунду X',desc:'За уровень: +5 000 ₽/сек',icon:'🌍',color:'#30d158',base:25000000,mult:2.0,max:15,type:'passive',val:5000},
+  {id:'a8',name:'Доход в секунду XII',desc:'За уровень: +25 000 ₽/сек',icon:'🌀',color:'#bf5af2',base:300000000,mult:2.1,max:12,type:'passive',val:25000},
+  {id:'m4',name:'Множитель дохода V',desc:'За уровень: +0.4 к множителю дохода',icon:'🎵',color:'#ff2d55',base:3000000,mult:2.9,max:5,type:'mult',val:0.4},
+  {id:'m5',name:'Множитель дохода VI',desc:'За уровень: +1 к множителю дохода',icon:'👑',color:'#ffd700',base:100000000,mult:3.5,max:2,type:'mult',val:1.0},
+  {id:'cr3',name:'Сила крита II',desc:'За уровень: +2 к силе крита',icon:'💢',color:'#ff2d55',base:100000,mult:2.0,max:3,type:'critpower',val:2},
+  {id:'luck2',name:'Шанс крита III',desc:'За уровень: +3% к шансу крита',icon:'☘️',color:'#30d158',base:50000,mult:1.9,max:15,type:'luck',val:3},
+  {id:'mineb2',name:'Бонус в Минах II',desc:'+8% к минам',icon:'💣',color:'#ff9f0a',base:80000,mult:1.85,max:10,type:'minebonus',val:8},
+  {id:'caseb2',name:'Скидка на кейсы II',desc:'За уровень: −3% к цене кейсов',icon:'🎫',color:'#bf5af2',base:8000000,mult:2.7,max:8,type:'casebonus',val:3},
+  {id:'caseluck',name:'Удача в кейсах',desc:'За уровень: +8% к шансу редких дропов',icon:'🎲',color:'#ffd700',base:40000000,mult:2.8,max:10,type:'caseluck',val:1},
   {id:'cq2',name:'Открытие ×2',desc:'Открывать 2 кейса за раз',icon:'📬',color:'#0a84ff',base:3e9,mult:1,max:1,type:'caseqty',val:2},
   {id:'cq3',name:'Открытие ×3',desc:'Открывать 3 кейса за раз',icon:'📮',color:'#64d2ff',base:6e10,mult:1,max:1,type:'caseqty',val:3,req:'cq2'},
   {id:'cq4',name:'Открытие ×4',desc:'Открывать 4 кейса за раз',icon:'🏭',color:'#bf5af2',base:9e11,mult:1,max:1,type:'caseqty',val:4,req:'cq3'},
   {id:'cq5',name:'Открытие ×5',desc:'Открывать 5 кейсов за раз',icon:'🏆',color:'#ff2d55',base:1.5e13,mult:1,max:1,type:'caseqty',val:5,req:'cq4'},
-  {id:'clickm2',name:'Сверхтап',desc:'+15% к клику',icon:'👊',color:'#ff453a',base:150000,mult:1.9,max:10,type:'clickmult',val:0.15},
-  {id:'passm2',name:'Вечный доход',desc:'+20% пассивки',icon:'♾️',color:'#30d158',base:200000,mult:1.95,max:8,type:'passivemult',val:0.2},
-  {id:'glob2',name:'Мировой буст',desc:'+8% ко всему',icon:'🌐',color:'#64d2ff',base:300000,mult:2.3,max:10,type:'globalmult',val:0.08},
-  {id:'startbal',name:'Стартовый капитал',desc:'Разово +баланс при покупке',icon:'💵',color:'#30d158',base:10000,mult:2.5,max:5,type:'boost',val:1},
-  {id:'speed',name:'Ускоритель',desc:'×2 на 60 сек',icon:'⚡',color:'#ff9f0a',base:50000,mult:1.8,max:15,type:'boost',val:1},
-  {id:'goldfinger',name:'Золотой палец',desc:'+200 ₽ к клику',icon:'👆',color:'#ffd700',base:80000,mult:1.6,max:25,type:'click',val:200},
-  {id:'diamondhand',name:'Алмазная рука',desc:'+1000 ₽ к клику',icon:'💎',color:'#64d2ff',base:600000,mult:1.65,max:20,type:'click',val:1000},
-  {id:'rain',name:'Денежный дождь',desc:'+200 ₽/сек',icon:'🌧️',color:'#30d158',base:150000,mult:1.7,max:25,type:'passive',val:200},
-  {id:'storm',name:'Шторм бабла',desc:'+800 ₽/сек',icon:'⛈️',color:'#0a84ff',base:800000,mult:1.72,max:20,type:'passive',val:800},
-  {id:'critluck',name:'Крит-мастер',desc:'+5% крит',icon:'🎯',color:'#ff2d55',base:75000,mult:1.85,max:8,type:'luck',val:5},
-  {id:'skinmult',name:'Сила скинов',desc:'+10% от бонуса скина',icon:'🎨',color:'#bf5af2',base:400000,mult:2.0,max:5,type:'globalmult',val:0.1},
-  {id:'bank',name:'Банк Коча',desc:'+12% ко всему',icon:'🏦',color:'#ffd700',base:2000000,mult:2.4,max:5,type:'globalmult',val:0.12},
-  {id:'overclock',name:'Разгон',desc:'+25% к клику',icon:'🔧',color:'#ff9f0a',base:500000,mult:2.0,max:6,type:'clickmult',val:0.25},
-  {id:'idleking',name:'Король айдла',desc:'+30% пассивки',icon:'😴',color:'#64d2ff',base:600000,mult:2.0,max:6,type:'passivemult',val:0.3},
-  {id:'combo',name:'Комбо',desc:'×1.25 ко всему',icon:'🔥',color:'#ff2d55',base:1500000,mult:2.6,max:4,type:'mult',val:0.25},
-  {id:'final',name:'Финальный буст',desc:'×3 ко всему',icon:'🏆',color:'#ffd700',base:5000000000,mult:1,max:1,type:'mult',val:2.0},
-  {id:'auto4',name:'Автокликер IV',desc:'+4 авто/сек',icon:'🖥️',color:'#0a84ff',base:80000000,mult:2.1,max:10,type:'auto',val:4},
-  {id:'auto5',name:'Автокликер V',desc:'+8 авто/сек',icon:'🛸',color:'#bf5af2',base:500000000,mult:2.2,max:8,type:'auto',val:8}
+  {id:'clickm2',name:'Усилитель клика II',desc:'За уровень: +15% к силе клика',icon:'👊',color:'#ff453a',base:150000,mult:1.9,max:10,type:'clickmult',val:0.15},
+  {id:'passm2',name:'Усилитель пассивки II',desc:'За уровень: +20% к пассивному доходу',icon:'♾️',color:'#30d158',base:200000,mult:1.95,max:8,type:'passivemult',val:0.2},
+  {id:'glob2',name:'Бонус ко всему доходу II',desc:'За уровень: +8% ко всему доходу',icon:'🌐',color:'#64d2ff',base:300000,mult:2.3,max:10,type:'globalmult',val:0.08},
+  {id:'startbal',name:'Стартовый капитал',desc:'Покупка: разово даёт деньги (каждый уровень ×3)',icon:'💵',color:'#30d158',base:10000,mult:2.5,max:5,type:'boost',val:1},
+  {id:'speed',name:'Ускоритель ×2',desc:'Покупка: доход ×2 на 60 сек',icon:'⚡',color:'#ff9f0a',base:50000,mult:1.8,max:15,type:'boost',val:1},
+  {id:'goldfinger',name:'Сила клика V',desc:'За уровень: +200 ₽ к клику',icon:'👆',color:'#ffd700',base:80000,mult:1.6,max:25,type:'click',val:200},
+  {id:'diamondhand',name:'Сила клика VIII',desc:'За уровень: +1 000 ₽ к клику',icon:'💎',color:'#64d2ff',base:600000,mult:1.65,max:20,type:'click',val:1000},
+  {id:'rain',name:'Доход в секунду V',desc:'За уровень: +200 ₽/сек',icon:'🌧️',color:'#30d158',base:150000,mult:1.7,max:25,type:'passive',val:200},
+  {id:'storm',name:'Доход в секунду VII',desc:'За уровень: +800 ₽/сек',icon:'⛈️',color:'#0a84ff',base:800000,mult:1.72,max:20,type:'passive',val:800},
+  {id:'critluck',name:'Шанс крита IV',desc:'За уровень: +5% к шансу крита',icon:'🎯',color:'#ff2d55',base:75000,mult:1.85,max:8,type:'luck',val:5},
+  {id:'skinmult',name:'Усилитель скинов',desc:'За уровень: +10% к бонусу надетого скина',icon:'🎨',color:'#bf5af2',base:400000,mult:2.0,max:5,type:'skinmult',val:0.1},
+  {id:'bank',name:'Бонус ко всему доходу III',desc:'За уровень: +12% ко всему доходу',icon:'🏦',color:'#ffd700',base:2000000,mult:2.4,max:5,type:'globalmult',val:0.12},
+  {id:'overclock',name:'Усилитель клика III',desc:'За уровень: +25% к силе клика',icon:'🔧',color:'#ff9f0a',base:500000,mult:2.0,max:6,type:'clickmult',val:0.25},
+  {id:'idleking',name:'Усилитель пассивки III',desc:'За уровень: +30% к пассивному доходу',icon:'😴',color:'#64d2ff',base:600000,mult:2.0,max:6,type:'passivemult',val:0.3},
+  {id:'combo',name:'Множитель дохода IV',desc:'За уровень: +0.25 к множителю дохода',icon:'🔥',color:'#ff2d55',base:1500000,mult:2.6,max:4,type:'mult',val:0.25},
+  {id:'final',name:'Множитель дохода VIII',desc:'За уровень: +2 к множителю дохода',icon:'🏆',color:'#ffd700',base:5000000000,mult:1,max:1,type:'mult',val:2.0},
+  {id:'auto4',name:'Автокликер IV',desc:'За уровень: +4 автоклик/сек',icon:'🖥️',color:'#0a84ff',base:80000000,mult:2.1,max:10,type:'auto',val:4},
+  {id:'auto5',name:'Автокликер V',desc:'За уровень: +8 автоклик/сек',icon:'🛸',color:'#bf5af2',base:500000000,mult:2.2,max:8,type:'auto',val:8}
 ];
 
 // remove holes
 while(upgrades.includes(undefined)) upgrades.splice(upgrades.indexOf(undefined),1);
-upgrades.forEach(u=>{u.getText=function(l){
-  if(this.type==='click')return `+${l*this.val} ₽`;
-  if(this.type==='passive')return `+${(l*this.val).toFixed(1)}/сек`;
-  if(this.type==='auto')return `+${l*this.val}/сек`;
-  if(this.type==='mult')return `×${(1+l*this.val).toFixed(2)}`;
-  if(this.type==='crit')return `${Math.min(70,l*this.val)}%`;
-  if(this.type==='critpower')return `×${5+l*3}`;
-  if(this.type==='boost')return `Куплено: ${l}`;
-  if(this.type==='luck')return `+${l*this.val}% крит`;
-  if(this.type==='minebonus')return `+${l*this.val}% мины`;
-  if(this.type==='casebonus')return `-${l*this.val}% кейс`;
-  if(this.type==='passivemult')return `+${(l*this.val*100).toFixed(0)}% пассив`;
-  if(this.type==='clickmult')return `+${(l*this.val*100).toFixed(0)}% клик`;
-  if(this.type==='globalmult')return `+${(l*this.val*100).toFixed(0)}% всё`;
-  if(this.type==='caseluck')return `Удача +${l}`;
-  if(this.type==='caseqty')return `${this.val} за раз`;
+function upgFmt(n){n=+n||0;if(Math.abs(n)>=1e3)return formatNum(n);return String(+n.toFixed(2))}
+function upgGetText(l){
+  const v=l*this.val;
+  if(this.type==='click')return '+'+upgFmt(v)+' ₽ к клику';
+  if(this.type==='passive')return '+'+upgFmt(v)+' ₽/сек';
+  if(this.type==='auto')return '+'+upgFmt(v)+' автоклик/сек';
+  if(this.type==='mult')return '+'+upgFmt(v)+' к множителю';
+  if(this.type==='crit'||this.type==='luck')return '+'+upgFmt(v)+'% шанс крита';
+  if(this.type==='critpower')return '+'+upgFmt(v)+' к силе крита';
+  if(this.type==='boost')return 'Куплено: '+l;
+  if(this.type==='minebonus')return '+'+upgFmt(v)+'% в Минах';
+  if(this.type==='casebonus')return '−'+upgFmt(v)+'% к цене кейсов';
+  if(this.type==='passivemult')return '+'+Math.round(v*100)+'% к пассивке';
+  if(this.type==='clickmult')return '+'+Math.round(v*100)+'% к клику';
+  if(this.type==='globalmult')return '+'+Math.round(v*100)+'% ко всему';
+  if(this.type==='skinmult')return '+'+Math.round(v*100)+'% к бонусу скина';
+  if(this.type==='caseluck')return '+'+(l*8)+'% к шансу редких';
+  if(this.type==='caseqty')return this.val+(this.val>=5?' кейсов':' кейса')+' за раз';
   return '';
-}});
+}
+upgrades.forEach(u=>{u.getText=upgGetText});
+// Быстрые суммы уровней по типу (кэш списка по типу)
+const _upgByType={};let _upgByTypeN=-1;
+function upgOfType(t){if(_upgByTypeN!==upgrades.length){for(const k in _upgByType)delete _upgByType[k];upgrades.forEach(u=>{if(u)(_upgByType[u.type]=_upgByType[u.type]||[]).push(u)});_upgByTypeN=upgrades.length}return _upgByType[t]||[]}
+function upgSum(t){const g=game.upgrades;let s=0;for(const u of upgOfType(t))s+=(g[u.id]||0)*u.val;return s}
+const _upgById=new Map();
+function upgById(id){let u=_upgById.get(id);if(!u||_upgById.size<upgrades.length){_upgById.clear();upgrades.forEach(x=>{if(x)_upgById.set(x.id,x)});u=_upgById.get(id)}return u}
 
 // ==================== ACHIEVEMENTS (claimable) ====================
 const achievements = [
@@ -1007,26 +1019,15 @@ function getCostBulk(u, qty){
   return total;
 }
 function getClickPower(){
-  let p=1;
-  upgrades.filter(u=>u.type==='click').forEach(u=>{p+=(game.upgrades[u.id]||0)*u.val});
-  const cm=1+((game.upgrades.clickm||0)*0.1);
-  return p*cm;
+  return (1+upgSum('click'))*(1+upgSum('clickmult'));
 }
 function getPassiveBase(){
-  let p=0;
-  upgrades.filter(u=>u.type==='passive').forEach(u=>{p+=(game.upgrades[u.id]||0)*u.val});
-  const pm=1+((game.upgrades.offline||0)*0.1);
-  return p*pm*fxv('pass');
+  return upgSum('passive')*(1+upgSum('passivemult'))*fxv('pass');
 }
-function getAutoRate(){
-  let a=0;
-  upgrades.filter(u=>u.type==='auto').forEach(u=>{a+=(game.upgrades[u.id]||0)*u.val});
-  return a;
-}
+function getAutoRate(){return upgSum('auto')}
 function getMultiplier(){
-  let m=1;
-  upgrades.filter(u=>u.type==='mult').forEach(u=>{m+=(game.upgrades[u.id]||0)*u.val});
-  m*=1+((game.upgrades.globalmult||0)*0.05);
+  let m=1+upgSum('mult');
+  m*=1+upgSum('globalmult');
   m*=getSkinMult();
   if(Date.now()<game.boostUntil)m*=game.boostMult;
   m*=fxv('all');
@@ -1034,11 +1035,9 @@ function getMultiplier(){
   return m;
 }
 function getCritChance(){
-  let c=(game.upgrades.cr||0)*2;
-  c+=(game.upgrades.luck||0)*1;
-  return Math.min(100,c+fxv('crit',0));
+  return Math.min(100,upgSum('crit')+upgSum('luck')+fxv('crit',0));
 }
-function getCritPower(){return 2+((game.upgrades.cr2||0)*1)+((game.upgrades.cr3||0)*2)}
+function getCritPower(){return 2+upgSum('critpower')}
 function getMineBonus(){return 1+((game.upgrades.mineb||0)*0.05)}
 function getCasePrice(){const base=50000*1;const disc=1-((game.upgrades.caseb||0)*0.05)-((game.upgrades.caseb2||0)*0.03);return Math.max(1,Math.floor(base*disc*fxv('disc')))}
 function getCasePrice2(){const base=5000000*1;const disc=1-((game.upgrades.caseb||0)*0.05)-((game.upgrades.caseb2||0)*0.03);return Math.max(1,Math.floor(base*disc*fxv('disc')))}
@@ -1067,8 +1066,13 @@ function doClick(){
   }
   const bal=document.getElementById('balance');
   bal.classList.remove('pop');void bal.offsetWidth;bal.classList.add('pop');
-  updateUI(false);checkAchievements();save();
+  uiSoon();
+  const _n=Date.now();
+  if(_n-(doClick._ach||0)>700){doClick._ach=_n;checkAchievements()}
+  clearTimeout(doClick._sv);doClick._sv=setTimeout(()=>save(),1500);
 }
+// Объединяет частые лёгкие обновления интерфейса в одно за кадр
+function uiSoon(){if(uiSoon._r)return;uiSoon._r=requestAnimationFrame(()=>{uiSoon._r=0;updateUI(false)})}
 
 function buyUpgrade(id){
   const u=upgrades.find(x=>x&&x.id===id);if(!u)return;
@@ -1404,9 +1408,9 @@ function updateUI(full=true){
 
   document.querySelectorAll('.buy-btn').forEach(btn=>{
     const id=btn.dataset.id;if(!id)return;
-    const u=upgrades.find(x=>x&&x.id===id);if(!u)return;
+    const u=upgById(id);if(!u)return;
     const lvl=game.upgrades[id]||0;const maxed=u.max&&lvl>=u.max;const cost=getCostBulk(u,Math.max(1,Math.min(game.buyQty||1,(u.max||9999)-lvl)));const can=game.balance>=cost&&!maxed;
-    btn.disabled=!can;btn.textContent=buyBtnText(u);
+    if(btn.disabled!==!can)btn.disabled=!can;const _tx=buyBtnText(u);if(btn.textContent!==_tx)btn.textContent=_tx;
   });
   if(!full&&document.getElementById('bulkBar'))return;
 
@@ -1429,12 +1433,12 @@ function updateUI(full=true){
 
   const CATS=[
     {key:'click',title:'👊 Сила клика',types:['click','clickmult']},
-    {key:'passive',title:'📈 Пассивка',types:['passive','passivemult']},
-    {key:'mult',title:'✨ Множители',types:['mult','globalmult']},
-    {key:'crit',title:'⚡ Крит и удача',types:['crit','critpower','luck']},
+    {key:'passive',title:'📈 Пассивный доход',types:['passive','passivemult']},
+    {key:'mult',title:'✨ Множители дохода',types:['mult','globalmult','skinmult']},
+    {key:'crit',title:'⚡ Криты',types:['crit','luck','critpower']},
   ];
   CATS.forEach(cat=>{
-    const items=upgrades.filter(u=>u&&cat.types.includes(u.type));
+    const items=[];cat.types.forEach(t=>items.push(...upgOfType(t).slice().sort((x,y)=>x.base-y.base)));
     if(!items.length)return;
     const isOpen=!!game._openCats[cat.key];
     const head=document.createElement('div');
@@ -1443,6 +1447,7 @@ function updateUI(full=true){
     head.onclick=()=>{game._openCats[cat.key]=!game._openCats[cat.key];updateUI()};
     list.appendChild(head);
     if(!isOpen)return;
+    const frag=document.createDocumentFragment();
     items.forEach(u=>{
       const lvl=game.upgrades[u.id]||0;
       const qty=game.buyQty||1;
@@ -1453,10 +1458,11 @@ function updateUI(full=true){
       const qtyLabel=(!maxed&&qty>1)?' ×'+Math.min(qty,(u.max||9999)-lvl):'';
       card.innerHTML=`<div class="upgrade-icon" style="background:${u.color}22">${u.icon}</div>
         <div class="upgrade-info"><div class="upgrade-name">${u.name}</div><div class="upgrade-desc">${u.desc}</div>
-        <div class="upgrade-level">Ур. ${lvl}${u.max?'/'+u.max:''} · ${u.getText(lvl)}</div></div>
+        <div class="upgrade-level">Ур. ${lvl}${u.max?'/'+u.max:''} · ${lvl?u.getText(lvl):'нет'}${maxed?'':' <span style="color:var(--accent2)">➜ '+u.getText(Math.min(u.max||9999,lvl+qty))+'</span>'}</div></div>
         <button class="buy-btn" data-id="${u.id}" ${can?'':'disabled'}>${maxed?'MAX':formatNum(cost)+' ₽'+qtyLabel}</button>`;
-      list.appendChild(card);
+      frag.appendChild(card);
     });
+    list.appendChild(frag);
   });
 
   // Items panel
@@ -1821,7 +1827,7 @@ const Cases={
     $id('caseOpenAgain').onclick=()=>this.open();
     $id('caseBackToDetail').onclick=()=>{if(!this.rolling)this.openDetail(this.cur)};
     $id('caseSkip').onclick=()=>{this.skip=true};
-    const cl=upgrades.find(u=>u.id==='caseluck');if(cl)cl.getText=l=>'+'+(l*8)+'% к шансу редких';
+    
   },
   view(id){['caseLobby','caseDetail','caseContents','caseUpgView','caseRollView'].forEach(v=>$id(v).style.display=v===id?'block':'none')},
   qty(){return Math.max(1,Math.min(game.caseQty||1,getCaseQtyMax()))},
@@ -2835,19 +2841,19 @@ Object.assign(SFX,{
   claim(){this.n(880,0,.08,'sine',.12);this.n(1175,.06,.08,'sine',.12);this.n(1760,.12,.2,'sine',.12)}
 });
 const upgradesNew=[
-  {id:'n_c1',name:'Тренировка пальцев',desc:'+25 ₽ к клику',icon:'🖐️',color:'#ff9f0a',base:5e5,mult:1.5,max:20,type:'click',val:25},
-  {id:'n_c2',name:'Мозоли',desc:'+250 ₽ к клику',icon:'🩹',color:'#ff9f0a',base:5e7,mult:1.55,max:15,type:'click',val:250},
-  {id:'n_p1',name:'Подработка',desc:'+20 ₽/сек',icon:'🧹',color:'#30d158',base:3e6,mult:1.5,max:20,type:'passive',val:20},
-  {id:'n_p2',name:'Дивиденды',desc:'+200 ₽/сек',icon:'📊',color:'#30d158',base:1e8,mult:1.55,max:15,type:'passive',val:200},
-  {id:'n_c3',name:'Стальные пальцы',desc:'+5 000 ₽ к клику',icon:'🦾',color:'#0a84ff',base:5e9,mult:1.7,max:15,type:'click',val:5000},
-  {id:'n_p3',name:'Рентный доход',desc:'+4 000 ₽/сек',icon:'🏢',color:'#0a84ff',base:8e9,mult:1.7,max:15,type:'passive',val:4000},
-  {id:'n_m1',name:'Азарт',desc:'+0.25 к множителю',icon:'🎲',color:'#0a84ff',base:2e9,mult:2.4,max:10,type:'mult',val:0.25},
-  {id:'n_m2',name:'Золотая эра',desc:'+0.75 к множителю',icon:'👑',color:'#ff2d55',base:5e11,mult:3,max:8,type:'mult',val:0.75},
-  {id:'n_c4',name:'Рука бога',desc:'+500 000 ₽ к клику',icon:'🙌',color:'#ff2d55',base:1e12,mult:2.2,max:12,type:'click',val:500000},
-  {id:'n_p4',name:'Денежный поток',desc:'+400 000 ₽/сек',icon:'🌊',color:'#ff2d55',base:2e12,mult:2.2,max:12,type:'passive',val:400000}
+  {id:'n_c1',name:'Сила клика VII',desc:'За уровень: +1 500 ₽ к клику',icon:'🖐️',color:'#ff9f0a',base:5e5,mult:1.5,max:20,type:'click',val:1500},
+  {id:'n_c2',name:'Сила клика XI',desc:'За уровень: +30 000 ₽ к клику',icon:'🩹',color:'#ff9f0a',base:5e7,mult:1.55,max:15,type:'click',val:30000},
+  {id:'n_p1',name:'Доход в секунду IX',desc:'За уровень: +1 500 ₽/сек',icon:'🧹',color:'#30d158',base:3e6,mult:1.5,max:20,type:'passive',val:1500},
+  {id:'n_p2',name:'Доход в секунду XI',desc:'За уровень: +40 000 ₽/сек',icon:'📊',color:'#30d158',base:1e8,mult:1.55,max:15,type:'passive',val:40000},
+  {id:'n_c3',name:'Сила клика XIII',desc:'За уровень: +200 000 ₽ к клику',icon:'🦾',color:'#0a84ff',base:5e9,mult:1.7,max:15,type:'click',val:200000},
+  {id:'n_p3',name:'Доход в секунду XIII',desc:'За уровень: +200 000 ₽/сек',icon:'🏢',color:'#0a84ff',base:8e9,mult:1.7,max:15,type:'passive',val:200000},
+  {id:'n_m1',name:'Множитель дохода VII',desc:'За уровень: +0.25 к множителю дохода',icon:'🎲',color:'#0a84ff',base:2e9,mult:2.4,max:10,type:'mult',val:0.25},
+  {id:'n_m2',name:'Множитель дохода IX',desc:'За уровень: +0.75 к множителю дохода',icon:'👑',color:'#ff2d55',base:5e11,mult:3,max:8,type:'mult',val:0.75},
+  {id:'n_c4',name:'Сила клика XIV',desc:'За уровень: +500 000 ₽ к клику',icon:'🙌',color:'#ff2d55',base:1e12,mult:2.2,max:12,type:'click',val:500000},
+  {id:'n_p4',name:'Доход в секунду XIV',desc:'За уровень: +400 000 ₽/сек',icon:'🌊',color:'#ff2d55',base:2e12,mult:2.2,max:12,type:'passive',val:400000}
 ];
 upgrades.push(...upgradesNew);
-upgradesNew.forEach(u=>{u.getText=upgrades[0].getText});
+upgradesNew.forEach(u=>{u.getText=upgGetText});
 achievements.push(
   {id:'cr1',name:'Кузнец',desc:'Сделай 1 крафт',icon:'🔨',check:()=>(game.crafts||0)>=1,reward:1e5,rarity:'common'},
   {id:'cr10',name:'Мастер крафта',desc:'10 крафтов',icon:'⚒️',check:()=>(game.crafts||0)>=10,reward:1e6,rarity:'rare'},
@@ -3699,16 +3705,15 @@ if(hd){
 window.getMineBonus=()=>1;
 // ---------- elite upgrades ----------
 const EL=[
- {id:'ek1',ic:'⚡',nm:'Импульс кванта',ds:'Усиливает каждый клик',P:2e14,tx:l=>'клики ×'+(1+.1*l).toFixed(1)},
- {id:'ek2',ic:'👊',nm:'Кулак титана',ds:'Мощный множитель кликов',P:5e14,tx:l=>'клики ×'+(1+.2*l).toFixed(1)},
- {id:'em1',ic:'✖️',nm:'Резонанс',ds:'Общий множитель дохода',P:3e14,tx:l=>'множитель ×'+(1+.05*l).toFixed(1)},
- {id:'em2',ic:'🌌',nm:'Сингулярность',ds:'Огромный множитель дохода',P:7.5e14,tx:l=>'множитель ×'+(1+.1*l).toFixed(1)},
- {id:'ec1',ic:'🎯',nm:'Точный удар',ds:'Шанс крита',P:4e14,tx:l=>'крит +'+(.5*l).toFixed(1)+'%'},
- {id:'ec2',ic:'💥',nm:'Разрушитель',ds:'Сила крита',P:9e14,tx:l=>'сила крита +'+(.25*l).toFixed(2)},
- {id:'el1',ic:'🍀',nm:'Клевер',ds:'Удача в кейсах',P:6e14,tx:l=>'удача +'+(.02*l*100).toFixed(0)+'%'},
- {id:'el2',ic:'🔮',nm:'Провидец',ds:'Большая удача в кейсах',P:1e15,tx:l=>'удача +'+(.06*l*100).toFixed(0)+'%'}
+ {id:'ek1',ic:'⚡',nm:'Элитный клик I',ds:'За уровень: +10% к силе клика',P:2e14,k:.1,tx:l=>'клик ×'+(1+.1*l).toFixed(1)},
+ {id:'ek2',ic:'👊',nm:'Элитный клик II',ds:'За уровень: +20% к силе клика',P:5e14,k:.2,tx:l=>'клик ×'+(1+.2*l).toFixed(1)},
+ {id:'em1',ic:'✖️',nm:'Элитный доход I',ds:'За уровень: +5% ко всему доходу',P:3e14,k:.05,tx:l=>'доход ×'+(1+.05*l).toFixed(2)},
+ {id:'em2',ic:'🌌',nm:'Элитный доход II',ds:'За уровень: +10% ко всему доходу',P:7.5e14,k:.1,tx:l=>'доход ×'+(1+.1*l).toFixed(1)},
+ {id:'ec1',ic:'🎯',nm:'Элитный шанс крита',ds:'За уровень: +0.5% к шансу крита',P:4e14,tx:l=>'+'+(.5*l).toFixed(1)+'% шанс крита'},
+ {id:'ec2',ic:'💥',nm:'Элитная сила крита',ds:'За уровень: +0.25 к силе крита',P:9e14,tx:l=>'+'+(.25*l).toFixed(2)+' к силе крита'},
+ {id:'el1',ic:'🍀',nm:'Элитная удача кейсов I',ds:'За уровень: +2% к шансу редких в кейсах',P:6e14,tx:l=>'+'+(2*l)+'% к шансу редких'},
+ {id:'el2',ic:'🔮',nm:'Элитная удача кейсов II',ds:'За уровень: +6% к шансу редких в кейсах',P:1e15,tx:l=>'+'+(6*l)+'% к шансу редких'}
 ];
-EL.forEach(e=>{e.mx=30;e.col='#'+['ffd60a','ff9f0a','bf5af2','ff2d95','30d158','64d2ff','a3e635','5ac8fa'][EL.indexOf(e)]});
 const L=id=>(game.upgrades&&game.upgrades[id])||0;
 const _cp=getClickPower,_gm=getMultiplier,_cc=getCritChance,_cw=getCritPower,_cl=getCaseLuck;
 window.getClickPower=()=>_cp()*(1+.1*L('ek1'))*(1+.2*L('ek2'));
@@ -3721,25 +3726,28 @@ const lvBulk=(e,q)=>{let t=0;const l=L(e.id);for(let i=0;i<q;i++)t+=lvCost(e,l+i
 function renderElite(){
  const list=$id('upgradeList');if(!list)return;game.eliteOpen=game.eliteOpen||{};game._openCats=game._openCats||{};
  const open=!!game._openCats.elite,head=document.createElement('div');
+ const opened=EL.filter(e=>game.eliteOpen[e.id]).length;
  head.style.cssText='font-weight:800;font-size:0.82rem;color:#fff;margin:10px 0 6px;padding:10px 12px;background:linear-gradient(135deg,#3b0764,#1e1b4b);border-radius:10px;border:1px solid #a78bfa;cursor:pointer;display:flex;justify-content:space-between;align-items:center';
- head.innerHTML='<span>👑 Элитные · от 200T до 1Qa</span><span style="color:var(--muted);font-size:.75rem">'+(open?'▲':'▼')+' '+EL.length+'</span>';
+ head.innerHTML='<span>👑 Элитные улучшения · открыто '+opened+'/'+EL.length+'</span><span style="color:var(--muted);font-size:.75rem">'+(open?'▲':'▼')+' '+EL.length+'</span>';
  head.onclick=()=>{game._openCats.elite=!game._openCats.elite;updateUI()};list.appendChild(head);if(!open)return;
+ const frag=document.createDocumentFragment();
  EL.forEach(e=>{
   const on=!!game.eliteOpen[e.id],lvl=L(e.id),card=document.createElement('div');card.className='upgrade-card'+(on?'':' el-lock');
   if(!on){
-   card.innerHTML='<div class="upgrade-icon" style="background:#a78bfa22">❓</div><div class="upgrade-info"><div class="upgrade-name">???</div><div class="upgrade-desc">Секретное улучшение. Купи, чтобы открыть</div><div class="upgrade-level">🔒 закрыто</div></div><button class="buy-btn el-buy" data-c="'+e.P+'" '+(game.balance>=e.P?'':'disabled')+'>🔓 '+formatNum(e.P)+' ₽</button>';
+   card.innerHTML='<div class="upgrade-icon" style="background:'+e.col+'22">'+e.ic+'</div><div class="upgrade-info"><div class="upgrade-name">'+e.nm+'</div><div class="upgrade-desc">'+e.ds+'</div><div class="upgrade-level">🔒 Сначала открой · потом до '+e.mx+' ур. (макс: '+e.tx(e.mx)+')</div></div><button class="buy-btn el-buy" data-c="'+e.P+'" '+(game.balance>=e.P?'':'disabled')+'>🔓 '+formatNum(e.P)+' ₽</button>';
    card.querySelector('button').onclick=()=>{if(game.balance<e.P)return;game.balance-=e.P;game.eliteOpen[e.id]=true;try{SFX.buy()}catch(x){}showToast('🔓 Открыто: '+e.nm,false);save();updateUI()};
   }else{
    const q=Math.max(1,Math.min(game.buyQty||1,e.mx-lvl)),cost=lvBulk(e,q),maxed=lvl>=e.mx;
-   card.innerHTML='<div class="upgrade-icon" style="background:'+e.col+'22">'+e.ic+'</div><div class="upgrade-info"><div class="upgrade-name">'+e.nm+'</div><div class="upgrade-desc">'+e.ds+'</div><div class="upgrade-level">Ур. '+lvl+'/'+e.mx+' · '+e.tx(lvl)+'</div></div><button class="buy-btn el-buy" data-c="'+cost+'" '+((maxed||game.balance<cost)?'disabled':'')+'>'+(maxed?'MAX':formatNum(cost)+' ₽'+(q>1?' ×'+q:''))+'</button>';
+   card.innerHTML='<div class="upgrade-icon" style="background:'+e.col+'22">'+e.ic+'</div><div class="upgrade-info"><div class="upgrade-name">'+e.nm+'</div><div class="upgrade-desc">'+e.ds+'</div><div class="upgrade-level">Ур. '+lvl+'/'+e.mx+' · '+(lvl?e.tx(lvl):'нет')+(maxed?'':' <span style="color:var(--accent2)">➜ '+e.tx(lvl+q)+'</span>')+'</div></div><button class="buy-btn el-buy" data-c="'+(maxed?0:cost)+'" data-max="'+(maxed?1:0)+'" '+((maxed||game.balance<cost)?'disabled':'')+'>'+(maxed?'MAX':formatNum(cost)+' ₽'+(q>1?' ×'+q:''))+'</button>';
    card.querySelector('button').onclick=()=>{if(maxed||game.balance<cost)return;game.balance-=cost;game.upgrades[e.id]=lvl+q;try{SFX.buy()}catch(x){}save();updateUI()};
   }
-  list.appendChild(card)});
+  frag.appendChild(card)});
+ list.appendChild(frag);
 }
 const _uu=updateUI;
 window.updateUI=function(full){const r=_uu.apply(this,arguments);
  if(full===undefined||full===true)renderElite();
- else document.querySelectorAll('.el-buy').forEach(b=>{b.disabled=game.balance<Number(b.dataset.c)&&!b.textContent.startsWith('MAX')||b.textContent==='MAX'});
+ else{const bal=game.balance;document.querySelectorAll('.el-buy').forEach(b=>{const d=b.dataset.max==='1'||bal<Number(b.dataset.c);if(b.disabled!==d)b.disabled=d})}
  return r};
 // ---------- presence + chat ----------
 const Chat={since:0,timer:null,seen:new Set(),
@@ -3933,7 +3941,7 @@ const Theme={set(t){document.documentElement.classList.toggle('light',t==='light
 Upgrader.fast=localStorage.getItem('upgFast')==='1';
 
 // ---------- 8. Ачивки: надёжный учёт ----------
-{const _u=updateUI;updateUI=function(){try{if(syncAch())showToast('Достижение готово к забору!',true)}catch(e){}return _u.apply(this,arguments)}}
+{const _u=updateUI;let _t=0;updateUI=function(full){const n=Date.now();if(full!==false||n-_t>1000){_t=n;try{if(syncAch())showToast('Достижение готово к забору!',true)}catch(e){}}return _u.apply(this,arguments)}}
 setInterval(()=>{try{if(syncAch()){showToast('Достижение готово к забору!',true);updateUI(false)}}catch(e){}},1500);
 
 // ---------- 9. Время в игре + онлайн ----------
