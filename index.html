@@ -3399,7 +3399,7 @@ const css=document.createElement('style');css.textContent=`
 .dl-row img{width:34px;height:34px;border-radius:50%}.dl-row .q{font-size:1.3rem;color:#c4b5fd;text-shadow:0 0 10px #8b5cf6;margin:0 auto}
 .dl-row.flip{animation:rlFlip .5s cubic-bezier(.2,.9,.3,1.3)}
 .dl-vs{align-self:center;font-weight:900;font-size:1.1rem;color:var(--accent)}
-.dl-res{text-align:center;font-weight:900;font-size:1.05rem;min-height:30px;margin:6px 0}
+.dl-res{text-align:center;font-weight:900;font-size:1.05rem;min-height:30px;margin:6px 0}.dl-reels{display:flex;flex-direction:column;gap:10px;margin:10px 0}.dl-reel-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dl-reel-label{font-size:.68rem;font-weight:800;color:var(--muted);margin:2px 0 4px;text-align:center}.dl-reel-wrap{height:92px;position:relative;overflow:hidden;border-radius:14px;border:2px solid var(--border);background:linear-gradient(180deg,#07070d,#151526);box-shadow:inset 0 0 24px rgba(0,0,0,.8)}.dl-reel-wrap:before,.dl-reel-wrap:after{content:'';position:absolute;top:0;bottom:0;width:22%;z-index:3;pointer-events:none}.dl-reel-wrap:before{left:0;background:linear-gradient(90deg,#07070d,transparent)}.dl-reel-wrap:after{right:0;background:linear-gradient(-90deg,#07070d,transparent)}.dl-reel-line{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:linear-gradient(180deg,transparent,#fff 18%,#fff 82%,transparent);z-index:5;box-shadow:0 0 12px #fff,0 0 28px #a78bfa;pointer-events:none}.dl-reel-track{display:flex;height:100%;will-change:transform}.dl-reel-item{flex:0 0 92px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-right:1px solid rgba(255,255,255,.06);font-size:.56rem;font-weight:800;overflow:hidden;box-sizing:border-box}.dl-reel-item img{width:50px;height:50px;border-radius:50%;object-fit:cover}.dl-reel-item .dn{max-width:86px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dl-reel-item .dm{font-size:.53rem;color:var(--accent2)}.dl-reel-item.win{transform:scale(1.08);z-index:4;box-shadow:0 0 24px var(--rc,#ffd60a);background:radial-gradient(circle,var(--rc,#ffd60a)33,transparent 72%);animation:dlWin .8s ease-in-out infinite alternate}.dl-reel-item.dim{opacity:.28;filter:grayscale(.7)}.dl-reel-item.hot{filter:brightness(1.25)}.dl-reel-sparks{position:absolute;inset:0;pointer-events:none;z-index:6}.dl-spark{position:absolute;width:5px;height:5px;border-radius:50%;left:50%;top:50%;animation:dlSpark .8s ease-out forwards}@keyframes dlWin{from{filter:brightness(1)}to{filter:brightness(1.45)}}@keyframes dlSpark{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}.dl-score{font-size:.66rem;color:var(--muted);text-align:center;margin-top:2px}.dl-score b{color:var(--accent2)}
 .new-badge{position:absolute;top:-9px;right:14px;padding:3px 9px;border-radius:20px;background:linear-gradient(135deg,#ff2d55,#ff9f0a);color:#fff;font:900 .64rem Rubik,sans-serif;letter-spacing:.06em;box-shadow:0 0 14px #ff2d55;animation:dlPulse 1.1s infinite}
 @keyframes dlPulse{50%{transform:scale(1.14);box-shadow:0 0 22px #ff9f0a}}
 `;document.head.appendChild(css);
@@ -3455,15 +3455,78 @@ async join(d){if(game.balance<d.price){showToast('Не хватает балан
  game.balance-=d.price;updateUI();save();let r;try{r=await call({a:'duel_join',id:d.id})}catch(e){r={err:'Нет связи'}}
  if(r.err){game.balance+=d.price;updateUI();save();showToast(r.err,false);this.last='';this.poll();return}this.last='';this.poll()},
 async play(d){
- this.busy=true;const B=$id('duelBody'),me=Acc.user,cs=d.cs,SA=cs.map((n,i)=>this.skin(n,d.ra[i])),SB=cs.map((n,i)=>this.skin(n,d.rb[i]));
+ this.busy=true;const B=$id('duelBody'),me=Acc.user,cs=d.cs;
+ const SA=cs.map((n,i)=>this.skin(n,d.ra[i])),SB=cs.map((n,i)=>this.skin(n,d.rb[i]));
  $id('duelModal').classList.add('show');clearInterval(this.timer);
- const rows=k=>cs.map((n,i)=>'<div class="dl-row" id="dl'+k+i+'"><span>'+this.em(n)+'</span><span class="q">?</span></div>').join('');
- const side=(name,k)=>'<div class="dl-side" id="dlS'+k+'"><div class="dl-head">'+name+(name===me?' (ты)':'')+'</div><div class="dl-tot" id="dlT'+k+'">0%</div>'+rows(k)+'</div>';
- B.innerHTML='<div class="dl-arena">'+side(d.a,'A')+'<div class="dl-vs">VS</div>'+side(d.b,'B')+'</div><div class="dl-res" id="dlRes">Открываем '+cs.length+' кейс.…</div>';
+ const side=(name,k)=>'<div class="dl-side" id="dlS'+k+'"><div class="dl-head">'+name+(name===me?' (ты)':'')+'</div><div class="dl-tot" id="dlT'+k+'">0%</div></div>';
+ B.innerHTML='<div class="dl-arena">'+side(d.a,'A')+'<div class="dl-vs">VS</div>'+side(d.b,'B')+'</div><div class="dl-reels" id="dlReels"></div><div class="dl-res" id="dlRes">Открываем '+cs.length+' кейс.…</div>';
+ const reels=$id('dlReels'), waitMs=ms=>new Promise(r=>setTimeout(r,ms));
+ let tA=0,tB=0;
+ const makeReel=(skin,caseNo,who,idx)=>{
+   const C=CASE_CFG[caseNo], pool=C.pool(), W=92, N=25, WIN=20;
+   const wrap=document.createElement('div');wrap.className='dl-reel-wrap';
+   const track=document.createElement('div');track.className='dl-reel-track';
+   const items=[];
+   for(let j=0;j<N;j++){
+     let x=pool[Math.floor(Math.random()*pool.length)]||pool[0];
+     if(j===WIN)x=skin;
+     const el=document.createElement('div');el.className='dl-reel-item';
+     const col=C.cl[x.rarity]||'#888';el.style.setProperty('--rc',col);
+     el.innerHTML='<img src="'+coinURL(x,60)+'"><div class="dn">'+x.name+'</div><div class="dm">+'+x.mult+'%</div>';
+     el._skin=x;track.appendChild(el);items.push(el);
+   }
+   wrap.appendChild(track);wrap.insertAdjacentHTML('beforeend','<div class="dl-reel-line"></div><div class="dl-reel-sparks"></div>');
+   const box=document.createElement('div');box.innerHTML='<div class="dl-reel-label">'+who+' · '+this.em(caseNo)+'</div>';box.appendChild(wrap);
+   reels.appendChild(box);
+   const center=wrap.clientWidth/2, target=WIN*W+W/2-center;
+   return {wrap,track,items,W,WIN,target,skin,caseNo,who,idx};
+ };
+ const all=[];
+ for(let i=0;i<cs.length;i++){
+   const row=document.createElement('div');row.className='dl-reel-row';reels.appendChild(row);
+   const old=reels;
+   // build directly inside this row so both players scroll side-by-side
+   const build=(skin,who)=>{
+     const C=CASE_CFG[cs[i]],pool=C.pool(),W=92,N=25,WIN=20;
+     const wrap=document.createElement('div');wrap.className='dl-reel-wrap';
+     const label=document.createElement('div');label.className='dl-reel-label';label.textContent=who+' · '+this.em(cs[i]);
+     const track=document.createElement('div');track.className='dl-reel-track';const items=[];
+     for(let j=0;j<N;j++){
+       let x=pool[Math.floor(Math.random()*pool.length)]||pool[0];if(j===WIN)x=skin;
+       const el=document.createElement('div');el.className='dl-reel-item';const col=C.cl[x.rarity]||'#888';el.style.setProperty('--rc',col);
+       el.innerHTML='<img src="'+coinURL(x,60)+'"><div class="dn">'+x.name+'</div><div class="dm">+'+x.mult+'%</div>';track.appendChild(el);items.push(el);
+     }
+     wrap.appendChild(track);wrap.insertAdjacentHTML('beforeend','<div class="dl-reel-line"></div><div class="dl-reel-sparks"></div>');
+     const host=document.createElement('div');host.appendChild(label);host.appendChild(wrap);row.appendChild(host);
+     const target=WIN*W+W/2-wrap.clientWidth/2;
+     return {wrap,track,items,W,WIN,target,skin,caseNo:cs[i],who};
+   };
+   all.push(build(SA[i],d.a),build(SB[i],d.b));
+ }
  try{SFX.caseOpen()}catch(e){}
- let tA=0,tB=0;const rev=(k,i,s)=>{const el=$id('dl'+k+i),col=CASE_CFG[cs[i]].cl[s.rarity]||'#888';el.className='dl-row flip';el.innerHTML='<img src="'+coinURL(s,80)+'" style="filter:drop-shadow(0 0 6px '+col+')"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.name+'</span><span style="color:'+visCol(col)+'">+'+s.mult+'%</span>';try{sfx('click')}catch(e){}};
- await wait(1200);
- for(let i=0;i<cs.length;i++){rev('A',i,SA[i]);tA+=SA[i].mult;$id('dlTA').textContent=tA+'%';await wait(650);rev('B',i,SB[i]);tB+=SB[i].mult;$id('dlTB').textContent=tB+'%';await wait(750)}
+ await waitMs(700);
+ const animateOne=(r,dur,delay)=>new Promise(resolve=>{
+   setTimeout(()=>{
+     const t0=performance.now(),dist=r.target+(Math.random()-.5)*10;
+     const step=now=>{
+       const t=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-t,5);
+       r.track.style.transform='translateX('+(-dist*e)+'px)';
+       if(t<1){requestAnimationFrame(step);return}
+       r.track.style.transition='transform .45s cubic-bezier(.2,1.7,.4,1)';r.track.style.transform='translateX('+(-dist)+'px)';
+       r.items.forEach((x,j)=>{x.classList.toggle('win',j===r.WIN);x.classList.toggle('dim',j!==r.WIN)});
+       const spark=r.wrap.querySelector('.dl-reel-sparks'),col=CASE_CFG[r.caseNo].cl[r.skin.rarity]||'#ffd60a';
+       for(let i=0;i<14;i++){const p=document.createElement('i');p.className='dl-spark';const a=Math.random()*Math.PI*2,d=30+Math.random()*65;p.style.cssText='background:'+col+';box-shadow:0 0 8px '+col+';--x:'+(Math.cos(a)*d)+'px;--y:'+(Math.sin(a)*d)+'px';spark.appendChild(p);setTimeout(()=>p.remove(),850)}
+       resolve();
+     };requestAnimationFrame(step);
+   },delay);
+ });
+ // Each case is a synchronized two-sided roll, like the case opening reel.
+ for(let i=0;i<cs.length;i++){
+   const pair=all.slice(i*2,i*2+2);await Promise.all([animateOne(pair[0],2600,0),animateOne(pair[1],2900,0)]);
+   tA+=SA[i].mult;tB+=SB[i].mult;$id('dlTA').textContent=tA+'%';$id('dlTB').textContent=tB+'%';
+   if(i<cs.length-1)await waitMs(420);
+ }
+ await waitMs(650);
  const s=await call({a:'duel_settle',id:d.id});
  if(s.err){B.innerHTML='<div class="hint">Не удалось завершить дуэль. Открой раздел заново.</div>';this.busy=false;return}
  const iA=me===d.a,my=iA?SA:SB,op=iA?SB:SA,mt=iA?tA:tB,ot=iA?tB:tA,tie=mt===ot,won=mt>ot;
@@ -3474,8 +3537,8 @@ async play(d){
  $id('dlS'+(iA?'A':'B')).classList.add(won?'win':tie?'x':'lose');if(!tie)$id('dlS'+(iA?'B':'A')).classList.add(won?'lose':'win');
  try{won?SFX.caseWin():SFX.lose()}catch(e){}
  updateUI();checkAchievements();save();try{Acc.push()}catch(e){}
- const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='width:100%;margin-top:8px';b.textContent='Ок';b.onclick=()=>{this.busy=false;this.open()};B.appendChild(b)}
-};
+ const b=document.createElement('button');b.className='btn-case-open';b.style.cssText='width:100%;margin-top:8px';b.textContent='Ок';b.onclick=()=>{this.busy=false;this.open()};B.appendChild(b)
+}};
 achievements.push({id:'duel1',name:'Дуэлянт',desc:'Сыграй 1 дуэль (Развлечения → Дуэли)',icon:'⚔️',check:()=>(game.duels||0)>=1,reward:1e6,rarity:'common'},{id:'duelw5',name:'Гроза арены',desc:'Выиграй 5 дуэлей',icon:'🏆',check:()=>(game.duelWins||0)>=5,reward:5e8,rarity:'epic'});
 Duel.init();
 })();
